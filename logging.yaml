@@ -1,0 +1,24 @@
+version: 1
+disable_existing_loggers: False
+formatters:
+    simple:
+        format: "%(asctime)s - %(filename)s - %(levelname)s - %(message)s"
+        datefmt: '%F %T'
+handlers:
+    console:
+        class: logging.StreamHandler
+        level: INFO
+        formatter: simple
+        stream: ext://sys.stdout
+    console_file:
+        class: logging.handlers.TimedRotatingFileHandler
+        level: INFO
+        formatter: simple
+        filename: logs/run.log   #这个路径根据自己的日志存放路径填写
+        interval: 2
+        backupCount: 30 #most 2 extensions
+        encoding: utf8
+        when: D #这里是按小时生成
+root:
+    level: INFO
+    handlers: [console, console_file]

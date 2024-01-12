@@ -1,0 +1,61 @@
+common:
+    output_path: data/
+    time_zone: Asia/Shanghai
+
+clickhouse:
+    host: 192.168.40.194
+    port: 9001
+    username: default
+    password: ceiec2021
+    db_name: tsg_galaxy_p19
+    table_name: session_record
+
+mariadb:
+    host: 192.168.44.53
+    port: 3306
+    user: root
+    pswd: 111111
+    timezone_hour_gap: 8  # actual local timezone - mariadb timezone (hours)
+    db_name: cn_api
+    ip_table_name: cn_vpn_learning_ip
+    domain_table_name: cn_vpn_learning_domain
+
+knowledgebase:
+    host: 192.168.44.54:8090
+    kb_username: learning_engine
+    api_pin: 111111
+    api_path: /v1/knowledgeBase/items/batch
+    api_token: a2857bc21b01421b85953fc2c65b4d4c
+    api_retry_times: 3
+    api_timeout: 9999
+    db_name: cn_api
+    ip_library_name: vpn_learning_ip
+    domain_library_name: vpn_learning_domain
+
+
+hotspotvpn_serverip:
+    vpn_service_name: hotspotvpn
+    plugin_id: 1
+    plugin_name: hotspotvpn_serverip
+    object_type: ip
+    confidence: confirmed
+    sql: SELECT common_server_ip, any(common_server_asn) AS asn, count(*) AS session_num, groupUniqArray(common_server_domain) as domains, length(domains) as domain_count, countDistinct(common_client_ip) AS cip_num FROM {$db_name}.{$table_name} WHERE {$time_filter} AND (ssl_sni IN ({$domain_list})) GROUP BY common_server_ip having domain_count >= 3
+    domains: paypal.com, facebook.com, twitter.com, whatsapp.com, get.adobe.com, cloudfront.net, mozilla.org
+
+
+ipvanishvpn_servername:
+    vpn_service_name: ipvanishvpn
+    plugin_id: 2
+    plugin_name: ipvanishvpn_servername
+    object_type: domain
+    confidence: confirmed
+    sql: SELECT DISTINCT dns_qname FROM {$db_name}.{$table_name} WHERE {$time_filter} AND dns_qname LIKE '%.vpn.ipvanish.com'
+
+
+ipvanishvpn_serverip:
+    vpn_service_name: ipvanishvpn
+    plugin_id: 3
+    plugin_name: ipvanishvpn_serverip
+    object_type: ip
+    confidence: confirmed
+    kb_sql: SELECT distinct domain FROM {$mariadb_dbname}.{$mariadb_domain_tablename} where vpn_service_name = 'ipvanishvpn'
