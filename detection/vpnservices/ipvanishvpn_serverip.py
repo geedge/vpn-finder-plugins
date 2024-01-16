@@ -82,8 +82,12 @@ class IpvanishvpnServerip(VpnDetector):
         # 判断是否能够访问外网，如果能够访问外网，则从外网获取ipvanish_servername_list的域名解析地址
         if check_internet():
             ipvanish_servername_list = self.find_more_servernames(ipvanish_servername_list)
-            resolved_ip_list = self.resolve_dns_for_domain_list(ipvanish_servername_list)
-
+            if len(ipvanish_servername_list) > 0:
+                resolved_ip_list = self.resolve_dns_for_domain_list(ipvanish_servername_list)
+            else:
+                self.logger.info('No ipvanish server name found from knowledge database.')
+        else:
+            self.logger.info('Failed to resolve ipvanish vpn servername. Cannot access internet.')
 
         return resolved_ip_list
 
