@@ -39,7 +39,7 @@ class IpvanishvpnServername(VpnDetector):
         self.logger.info('Start to query ipvanishvpn server name from session record')
 
         # construct query sql
-        TIME_FILTER_PATTERN = "(common_recv_time > toDateTime('{$start_time}', '{$time_zone}')) AND(common_recv_time <= toDateTime('{$end_time}', '{$time_zone}'))"
+        TIME_FILTER_PATTERN = self.config['common']['time_filter_pattern'].replace('recv_time_columnname', self.config['common']['recv_time_columnname'])
         time_filter = TIME_FILTER_PATTERN.replace("{$start_time}", str(self.start_time)).replace("{$end_time}", str(
             self.end_time)).replace("{$time_zone}", self.time_zone)
         self.sql = self.sql.replace("{$db_name}", self.dbname).replace("{$table_name}", self.table_name)

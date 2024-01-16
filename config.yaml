@@ -1,6 +1,8 @@
 common:
     output_path: data/
     time_zone: Asia/Shanghai
+    recv_time_columnname: common_recv_time
+    time_filter_pattern: (recv_time_columnname> toDateTime('{$start_time}', '{$time_zone}')) AND(recv_time_columnname <= toDateTime('{$end_time}', '{$time_zone}'))
 
 clickhouse:
     host: 192.168.40.194
@@ -59,3 +61,29 @@ ipvanishvpn_serverip:
     object_type: ip
     confidence: confirmed
     kb_sql: SELECT distinct domain FROM {$mariadb_dbname}.{$mariadb_domain_tablename} where vpn_service_name = 'ipvanishvpn'
+
+
+psiphon3vpn_serverip:
+    vpn_service_name: psiphon3vpn
+    plugin_id: 4
+    plugin_name: psiphon3vpn_serverip
+    object_type: ip
+    confidence:
+
+
+cyberghostvpn_servername:
+    vpn_service_name: cyberghostvpn
+    plugin_id: 5
+    plugin_name: cyberghostvpn_servername
+    object_type: domain
+    confidence: confirmed
+    sql: SELECT DISTINCT dns_qname FROM {$db_name}.{$table_name} WHERE {$time_filter} AND dns_qname LIKE '%.nodes.gen4.ninja'
+
+
+cyberghostvpn_serverip:
+    vpn_service_name: cyberghostvpn
+    plugin_id: 6
+    plugin_name: cyberghostvpn_serverip
+    object_type: ip
+    confidence: confirmed
+    kb_sql: SELECT distinct domain FROM {$mariadb_dbname}.{$mariadb_domain_tablename} where vpn_service_name = 'cyberghostvpn'
