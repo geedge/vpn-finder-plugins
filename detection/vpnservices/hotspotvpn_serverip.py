@@ -45,7 +45,7 @@ class HotspotvpnServerip(VpnDetector):
         self.sql = self.sql.replace("{$time_filter}", time_filter)
         self.sql = self.sql.replace("{$domain_list}", ','.join(self.masquerede_domains))
 
-        # self.logger.info("Sql for {}: {}".format(self.plugin_name, self.sql))
+        self.logger.info("Sql for {}: {}".format(self.plugin_name, self.sql))
 
         # query data from clickhouse database
         try:

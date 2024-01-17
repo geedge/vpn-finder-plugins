@@ -83,13 +83,14 @@ class VpnDetector:
         result_df['is_valid'] = 1
 
         # result save
-        if len(result_df) > 1:
+        if len(result_df) > 0:
             self.logger.info('Start to update data to knowledgebase')
             result_path = os.path.join('data', plugin_name)
             if not os.path.exists(result_path):
                 os.makedirs(result_path)
             result_file = os.path.join(result_path, output_filename)
             result_df.to_csv(result_file, index=False)
+            self.logger.info('Write {} {} {} to local file {} successfully.'.format(len(result_df), vpn_service_name, object_type, result_file))
 
             # update to knowledgebase
             knowledge_api = KnowledgeApi(self.config)
@@ -190,6 +191,15 @@ if __name__ == '__main__':
     elif plugin_name == 'ipvanishvpn_serverip':
         from vpnservices.ipvanishvpn_serverip import IpvanishvpnServerip
         detector = IpvanishvpnServerip(start_time, end_time)
+    elif plugin_name == 'cyberghostvpn_servername':
+        from vpnservices.cyberghostvpn_servername import CyberghostvpnServername
+        detector = CyberghostvpnServername(start_time, end_time)
+    elif plugin_name == 'cyberghostvpn_serverip':
+        from vpnservices.cyberghostvpn_serverip import CyberghostvpnServerip
+        detector = CyberghostvpnServerip(start_time, end_time)
+    elif plugin_name == 'geckovpn_serverip':
+        from vpnservices.geckovpn_serverip import GeckovpnServerip
+        detector = GeckovpnServerip(start_time, end_time)
 
     else:
         print('Please input correct plugin name')
