@@ -17,6 +17,8 @@ from ipvanishvpn_servername import IpvanishvpnServername
 from ivacyvpn_serverip import IvacyvpnServerip
 from ivacyvpn_servername import IvacyvpnServername
 
+from detection.vpnservices.turbovpn_serverip import TurbovpnServerip
+
 
 class TestHotspotvpnServerip(unittest.TestCase):
 
@@ -167,3 +169,21 @@ class TestIvacyvpnServerip(unittest.TestCase):
                                                       plugin_name=self.ivacyvpn_detector.plugin_name,
                                                       output_filename=self.ivacyvpn_detector.output_file_name,
                                                       confidence=self.ivacyvpn_detector.confidence)
+
+class TestTurbovpnServerip(unittest.TestCase):
+
+    def setUp(self):
+        self.turbovpn_detector = TurbovpnServerip(start_time='2024-01-17 00:00:00',
+                                                  end_time='2024-01-18 00:00:00')
+
+    def test_get_turbovpn_serverip(self):
+        self.result = self.turbovpn_detector.find_server()
+
+    def test_save_to_knowledgebase(self):
+        self.turbovpn_detector.save_to_knowledgebase(object_type='ip',
+                                                      object_list=self.turbovpn_detector.find_server(),
+                                                      vpn_service_name=self.turbovpn_detector.vpn_service_name,
+                                                      plugin_id=self.turbovpn_detector.plugin_id,
+                                                      plugin_name=self.turbovpn_detector.plugin_name,
+                                                      output_filename=self.turbovpn_detector.output_file_name,
+                                                      confidence=self.turbovpn_detector.confidence)

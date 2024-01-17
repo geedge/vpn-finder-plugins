@@ -206,6 +206,9 @@ if __name__ == '__main__':
     elif plugin_name == 'ivacyvpn_serverip':
         from vpnservices.ivacyvpn_serverip import IvacyvpnServerip
         detector = IvacyvpnServerip(start_time, end_time)
+    elif plugin_name == 'turbovpn_serverip':
+        from vpnservices.turbovpn_serverip import TurbovpnServerip
+        detector = TurbovpnServerip(start_time, end_time)
 
     else:
         print('Please input correct plugin name')
