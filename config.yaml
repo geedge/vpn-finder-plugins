@@ -5,11 +5,11 @@ common:
     time_filter_pattern: (recv_time_columnname> toDateTime('{$start_time}', '{$time_zone}')) AND(recv_time_columnname <= toDateTime('{$end_time}', '{$time_zone}'))
 
 clickhouse:
-    host: 192.168.44.30
+    host: 192.168.40.194
     port: 9001
     username: default
-    password: galaxy2019 # ceiec2021
-    db_name: tsg_galaxy_v3
+    password: ceiec2021
+    db_name: tsg_galaxy_p19
     table_name: session_record
 
 mariadb:
@@ -87,3 +87,32 @@ cyberghostvpn_serverip:
     object_type: ip
     confidence: confirmed
     kb_sql: SELECT distinct domain FROM {$mariadb_dbname}.{$mariadb_domain_tablename} where vpn_service_name = 'cyberghostvpn'
+
+
+geckovpn_serverip:
+    vpn_service_name: geckovpn
+    plugin_id: 7
+    plugin_name: geckovpn_serverip
+    object_type: ip
+    confidence: confirmed
+    sql: SELECT DISTINCT common_server_ip FROM {$db_name}.{$table_name} WHERE {$time_filter} AND ssl_cert_issuer like '%CN=SUV;O=SUV999%'
+
+
+
+ivacyvpn_servername:
+    vpn_service_name: ivacyvpn
+    plugin_id: 8
+    plugin_name: ivacyvpn_servername
+    object_type: domain
+    confidence: confirmed
+    sql: SELECT DISTINCT dns_qname FROM {$db_name}.{$table_name} WHERE {$time_filter} AND dns_qname LIKE '%.pointtoserver.com'
+
+
+
+ivacyvpn_serverip:
+    vpn_service_name: ivacyvpn
+    plugin_id: 9
+    plugin_name: ivacyvpn_serverip
+    object_type: ip
+    confidence: confirmed
+    kb_sql: SELECT distinct domain FROM {$mariadb_dbname}.{$mariadb_domain_tablename} where vpn_service_name = 'ivacyvpn'

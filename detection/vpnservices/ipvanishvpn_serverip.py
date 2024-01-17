@@ -86,7 +86,7 @@ class IpvanishvpnServerip(VpnDetector):
             else:
                 self.logger.info('No ipvanish server name found from knowledge database.')
         else:
-            self.logger.info('Failed to resolve ipvanish vpn servername. Cannot access internet.')
+            self.logger.info('No internet connection, skip dns resolve.')
 
         return resolved_ip_list
 

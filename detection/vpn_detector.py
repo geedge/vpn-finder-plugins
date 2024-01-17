@@ -200,6 +200,12 @@ if __name__ == '__main__':
     elif plugin_name == 'geckovpn_serverip':
         from vpnservices.geckovpn_serverip import GeckovpnServerip
         detector = GeckovpnServerip(start_time, end_time)
+    elif plugin_name == 'ivacyvpn_servername':
+        from vpnservices.ivacyvpn_servername import IvacyvpnServername
+        detector = IvacyvpnServername(start_time, end_time)
+    elif plugin_name == 'ivacyvpn_serverip':
+        from vpnservices.ivacyvpn_serverip import IvacyvpnServerip
+        detector = IvacyvpnServerip(start_time, end_time)
 
     else:
         print('Please input correct plugin name')

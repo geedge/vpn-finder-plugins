@@ -3,3 +3,6 @@ data/*
 .gitignore
 logs/*
 **/__pycache__/*
+.idea
+*.pyc
+.iml
