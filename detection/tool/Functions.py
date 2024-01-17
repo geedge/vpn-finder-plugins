@@ -394,34 +394,6 @@ class connectTest():
                              port=config['port'], database=config['database'])
         self.dbname = config['database']
 
-    def dataTest(self):
-        """
-        :return: 0:no data 2:wrong configuration
-        """
-        # 测试数据库有无数据
-        try:
-            # testSQL = "select * from " + self.tableName + " where (toDateTime(common_recv_time) >= '" + str(
-            #     self.headTime) + "') and (toDateTime(common_recv_time) <='" + str(self.tailTime) + "') Limit 1"
-
-            testSQL = "select * from " + self.tableName + " where common_recv_time >= toDateTime('" \
-                      + str(self.headTime) + "', '" + self.timeZone + "') and common_recv_time < toDateTime('" \
-                      + str(self.tailTime) + "', '" + self.timeZone + "') limit 1 "
-
-            queryResult = self.client.execute(testSQL)
-
-            if len(queryResult) < 1:
-                # logger.error(datetime.datetime.now(tz=pytz.timezone(self.timeZone)).strftime(
-                #                        "%Y-%m-%d %H:%M:%S") + '-' + str(self.headTime) + '~' + str(
-                #                        self.tailTime) + ' dataTest: ' + str('No data in this time window'))
-                return 0
-            return 1
-        except:
-            return 2
-            # logger.error(datetime.datetime.now(tz=pytz.timezone(self.timeZone)).strftime(
-            #                        "%Y-%m-%d %H:%M:%S") + '-' + 'time: ' + str(self.headTime) + '~' + str(
-            #                        self.tailTime) + ' dataTest: ' + str(
-            #                        'please check database configuration in config.yaml'))
-
 
 def get_project_path():
     path = os.path.join(os.getcwd())
