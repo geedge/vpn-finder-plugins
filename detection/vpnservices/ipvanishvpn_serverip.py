@@ -5,7 +5,6 @@
 # @File    : ipvanishvpn_serverip.py
 # @Function:
 
-import socket
 from vpn_detector import VpnDetector
 from tool.Functions import check_internet
 from tool.MariadbTool import MariadbUtil
@@ -64,12 +63,12 @@ class IpvanishvpnServerip(VpnDetector):
 
     def find_server(self):
         """
-        Get ipvanishvpn server ip from clickhouse database
+        Get ipvanishvpn server ip by resolving ipvanishvpn server name
         :return: ipvanishvpn server ip list
         """
         self.kb_sql = self.kb_sql.replace("{$mariadb_dbname}", self.mariadb_dbname).replace("{$mariadb_domain_tablename}", self.mariadb_domain_tb_name)
 
-        ipvanish_servername_list = []
+        servername_list = []
         resolved_ip_list = []
         try:
             query_result = self.mariadb.query_sql(self.kb_sql)
@@ -77,13 +76,13 @@ class IpvanishvpnServerip(VpnDetector):
             self.mariadb.close()
 
         if query_result:
-            ipvanish_servername_list = [i[0] for i in query_result]
+            servername_list = [i[0] for i in query_result]
 
         # 判断是否能够访问外网，如果能够访问外网，则从外网获取ipvanish_servername_list的域名解析地址
         if check_internet():
-            ipvanish_servername_list = self.find_more_servernames(ipvanish_servername_list)
-            if len(ipvanish_servername_list) > 0:
-                resolved_ip_list = self.resolve_dns_for_domain_list(ipvanish_servername_list)
+            servername_list = self.find_more_servernames(servername_list)
+            if len(servername_list) > 0:
+                resolved_ip_list = self.resolve_dns_for_domain_list(servername_list)
             else:
                 self.logger.info('No ipvanish server name found from knowledge database.')
         else:

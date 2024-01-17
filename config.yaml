@@ -5,11 +5,11 @@ common:
     time_filter_pattern: (recv_time_columnname> toDateTime('{$start_time}', '{$time_zone}')) AND(recv_time_columnname <= toDateTime('{$end_time}', '{$time_zone}'))
 
 clickhouse:
-    host: 192.168.40.194
+    host: 192.168.44.30
     port: 9001
     username: default
-    password: ceiec2021
-    db_name: tsg_galaxy_p19
+    password: galaxy2019 # ceiec2021
+    db_name: tsg_galaxy_v3
     table_name: session_record
 
 mariadb:

@@ -200,6 +200,13 @@ if __name__ == '__main__':
         detector.save_to_knowledgebase(result_list, detector.object_type,
                                    detector.vpn_service_name, detector.plugin_id,
                                    detector.plugin_name, detector.output_file_name, detector.confidence)
+        # Output logs to record the amount of data written, plugin id, plugin name and other information
+        detector.logger.info(
+            'Write {} {} to knowledgebase successfully. {} items found'.format(detector.vpn_service_name,
+                                                                               detector.object_type,
+                                                                               len(result_list)))
+
+
 
 
 
