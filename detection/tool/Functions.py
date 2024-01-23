@@ -462,6 +462,85 @@ def get_project_path():
     return os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
 
 
+def get_start_end_ip(ip_range_string):
+    if '-' in ip_range_string:
+        start_ip, end_ip = ip_range_string.split('-')
+    elif '/' in ip_range_string:
+        network = ipaddress.IPv4Network(ip_range_string, strict=False)
+        start_ip = str(network.network_address)
+        end_ip = str(network.broadcast_address)
+    elif ipaddress.ip_address(ip_range_string):
+        start_ip = ip_range_string
+        end_ip = ip_range_string
+
+    if is_valid_public_ip(start_ip) & is_valid_public_ip(end_ip):
+        return start_ip, end_ip
+    return
+
+
+
+def is_valid_public_ip(ip):
+    try:
+        ip_obj = ipaddress.ip_address(ip)
+        if (ip_obj!=None) & (ip_obj.is_global):
+            return True
+        else:
+            return False
+    except ValueError:
+        return False
+
+
+def get_all_ips(start_ip, end_ip):
+    result = []
+    start_ip_obj = ipaddress.ip_address(start_ip)
+    end_ip_obj = ipaddress.ip_address(end_ip)
+
+    # 遍历起始IP和结束IP之间的所有IP地址
+    current_ip = start_ip_obj
+    while current_ip <= end_ip_obj:
+        result.append(str(current_ip))
+        current_ip += 1
+    return result
+
+
+def ipranges_to_ips(ip_ranges):
+    """
+    Discription: 将ipranges转换为ip
+    :param file_path: ipranges
+    :return: ip列表
+    """
+    ip_list = []
+    for ip_range in ip_ranges:
+        result = get_start_end_ip(ip_range)
+        if len(result) == 2:
+            start_ip, end_ip = result
+            ip_list.extend(get_all_ips(start_ip, end_ip))
+    ip_list = list(set(ip_list))
+    ip_list.sort(key=lambda x: struct.unpack("!L", socket.inet_aton(x))[0])
+
+    return ip_list
+
+
+
+if __name__ == '__main__':
+    # 读取数据
+    ipranges_file_path = '/Users/joy/work/iie/project/cyber_narrator/CN/3-新功能研发/vpn-detection/2.分析脚本/主动爬取/AS14061_IPrange.txt'
+    output_file_path = '/Users/joy/work/iie/project/cyber_narrator/CN/3-新功能研发/vpn-detection/2.分析脚本/主动爬取/AS14061_IPlists.txt'
+
+    with open(ipranges_file_path, 'r') as file:
+        lines = file.readlines()
+    ranges = [i.strip('\n') for i in lines]
+    ip_ranges = [get_start_end_ip(ip_range) for ip_range in ranges]
+    ip_list = ipranges_to_ips(ip_ranges)
+
+    # ip_list保存到文件
+    with open(output_file_path, 'w') as file:
+        file.write('\n'.join(ip_list))
+
+
+
+
+
 
 
 
