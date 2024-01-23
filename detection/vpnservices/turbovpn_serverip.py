@@ -53,9 +53,9 @@ class TurbovpnServerip(VpnDetector):
             self.client.disconnect()
 
         if turbovpn_serverip_df.empty:
-            self.logger.info('No turbovpn server ip found from clickhouse database')
+            self.logger.info('No turbovpn server ip found from session record')
             return []
         turbovpn_serverip_list = turbovpn_serverip_df[0].drop_duplicates().tolist()
-        self.logger.info('Query turbovpn server ip from clickhouse database successfully. {} items found'
+        self.logger.info('Query turbovpn server ip from session records successfully. {} items found'
                          .format(len(turbovpn_serverip_list)))
         return turbovpn_serverip_list

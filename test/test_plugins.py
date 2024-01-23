@@ -173,8 +173,8 @@ class TestIvacyvpnServerip(unittest.TestCase):
 class TestTurbovpnServerip(unittest.TestCase):
 
     def setUp(self):
-        self.turbovpn_detector = TurbovpnServerip(start_time='2024-01-17 00:00:00',
-                                                  end_time='2024-01-18 00:00:00')
+        self.turbovpn_detector = TurbovpnServerip(start_time='2024-01-16 00:00:00',
+                                                  end_time='2024-01-19 00:00:00')
 
     def test_get_turbovpn_serverip(self):
         self.result = self.turbovpn_detector.find_server()
@@ -187,3 +187,22 @@ class TestTurbovpnServerip(unittest.TestCase):
                                                       plugin_name=self.turbovpn_detector.plugin_name,
                                                       output_filename=self.turbovpn_detector.output_file_name,
                                                       confidence=self.turbovpn_detector.confidence)
+
+
+if __name__ == '__main__':
+    # # 运行指定测试用例
+    suite = unittest.TestSuite()
+    suite.addTest(TestHotspotvpnServerip('test_get_hotspotvpn_serverip'))
+    suite.addTest(TestGeckovpnServerip('test_get_geckovpn_serverip'))
+    suite.addTest(TestCyberghostvpnServerip('test_get_cyberghostvpn_serverip'))
+    suite.addTest(TestCyberghostvpnServername('test_get_cyberghostvpn_servername'))
+    suite.addTest(TestIpvanishvpnServerip('test_get_ipvanishvpn_serverip'))
+    suite.addTest(TestIpvanishvpnServername('test_get_ipvanishvpn_servername'))
+    suite.addTest(TestIvacyvpnServername('test_get_ivacyvpn_servername'))
+    suite.addTest(TestIvacyvpnServerip('test_get_ivacyvpn_serverip'))
+    suite.addTest(TestTurbovpnServerip('test_get_turbovpn_serverip'))
+    runner = unittest.TextTestRunner()
+    runner.run(suite)
+
+
+

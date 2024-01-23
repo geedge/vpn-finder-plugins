@@ -53,10 +53,10 @@ class IpvanishvpnServername(VpnDetector):
             self.client.disconnect()
 
         if ipvanishvpn_servername_df.empty:
-            self.logger.info('No ipvanishvpn server name found from clickhouse database')
+            self.logger.info('No ipvanishvpn server name found from session records')
             return []
         ipvanishvpn_servername_list = ipvanishvpn_servername_df[0].drop_duplicates().tolist()
-        self.logger.info('Query ipvanishvpn server name from clickhouse database successfully. {} items found'
+        self.logger.info('Query ipvanishvpn server name from session records successfully. {} items found'
                          .format(len(ipvanishvpn_servername_list)))
 
         return ipvanishvpn_servername_list

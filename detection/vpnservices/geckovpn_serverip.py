@@ -32,7 +32,7 @@ class GeckovpnServerip(VpnDetector):
         Get geckovpn server ip from clickhouse database
         :return: geckovpn server ip list
         """
-        self.logger.info('Start to query geckovpn server ip from session record')
+        self.logger.info('Start to query geckovpn server ip from session records')
 
         # construct query sql
         TIME_FILTER_PATTERN = self.config['common']['time_filter_pattern'].replace('recv_time_columnname', self.config['common']['recv_time_columnname'])
@@ -49,9 +49,9 @@ class GeckovpnServerip(VpnDetector):
             self.client.disconnect()
 
         if geckovpn_serverip_df.empty:
-            self.logger.info('No geckovpn server ip found from clickhouse database')
+            self.logger.info('No geckovpn server ip found from session records')
             return []
         geckovpn_serverip_list = geckovpn_serverip_df[0].drop_duplicates().tolist()
-        self.logger.info('Query geckovpn server ip from clickhouse database successfully. {} items found'
+        self.logger.info('Query geckovpn server ip from session records successfully. {} items found'
                          .format(len(geckovpn_serverip_list)))
         return geckovpn_serverip_list

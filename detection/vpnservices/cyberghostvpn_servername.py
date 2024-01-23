@@ -53,9 +53,9 @@ class CyberghostvpnServername(VpnDetector):
             self.client.disconnect()
 
         if cyberghostvpn_servername_df.empty:
-            self.logger.info('No cyberghostvpn server name found from clickhouse database')
+            self.logger.info('No cyberghostvpn server name found from session records')
             return []
         cyberghostvpn_servername_list = cyberghostvpn_servername_df[0].drop_duplicates().tolist()
-        self.logger.info('Query cyberghostvpn server name from clickhouse database successfully. {} items found'
+        self.logger.info('Query cyberghostvpn server name from session records successfully. {} items found'
                          .format(len(cyberghostvpn_servername_list)))
         return cyberghostvpn_servername_list

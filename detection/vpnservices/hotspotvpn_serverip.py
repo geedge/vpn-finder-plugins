@@ -35,7 +35,7 @@ class HotspotvpnServerip(VpnDetector):
         Get hotspotvpn server ip from clickhouse database
         :return: hotspotvpn server ip list
         """
-        self.logger.info('Start to query hotspotvpn server ip from clickhouse database')
+        self.logger.info('Start to query hotspotvpn server ip from session records')
 
         # construct query sql
         TIME_FILTER_PATTERN = self.config['common']['time_filter_pattern'].replace('recv_time_columnname', self.config['common']['recv_time_columnname'])
@@ -54,7 +54,7 @@ class HotspotvpnServerip(VpnDetector):
             self.client.disconnect()
 
         if hotspotvpn_serverip_df.empty:
-            self.logger.info('No hotspotvpn server ip found from clickhouse database')
+            self.logger.info('No hotspotvpn server ip found from session records')
             return []
         hotspotvpn_serverip_list = hotspotvpn_serverip_df[0].drop_duplicates().tolist()
         self.logger.info('Query hotspotvpn server ip from clickhouse database successfully. {} items found'

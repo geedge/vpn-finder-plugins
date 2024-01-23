@@ -52,9 +52,9 @@ class IvacyvpnServername(VpnDetector):
             self.client.disconnect()
 
         if ivacyvpn_servername_df.empty:
-            self.logger.info('No ivacyvpn server name found from clickhouse database')
+            self.logger.info('No ivacyvpn server name found from session records')
             return []
         ivacyvpn_servername_list = ivacyvpn_servername_df[0].drop_duplicates().tolist()
-        self.logger.info('Query ivacyvpn server name from clickhouse database successfully. {} items found'
+        self.logger.info('Query ivacyvpn server name from session records successfully. {} items found'
                          .format(len(ivacyvpn_servername_list)))
         return ivacyvpn_servername_list
