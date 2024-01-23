@@ -5,11 +5,11 @@ common:
     time_filter_pattern: (recv_time_columnname> toDateTime('{$start_time}', '{$time_zone}')) AND(recv_time_columnname <= toDateTime('{$end_time}', '{$time_zone}'))
 
 clickhouse:
-    host: 192.168.44.30
+    host: 192.168.40.194
     port: 9001
     username: default
-    password: galaxy2019
-    db_name: tsg_galaxy_v3
+    password: ceiec2021
+    db_name: tsg_galaxy_p19
     table_name: session_record
 
 mariadb:
@@ -129,3 +129,13 @@ turbovpn_serverip:
     security_table_name: security_event
     security_policy_id: 3847
     sql: SELECT common_server_ip FROM {$db_name}.{$security_table_name} WHERE {$time_filter} AND common_policy_id ={$security_policy_id} AND common_server_port IN (66, 109, 8080, 97, 94, 92, 21, 25) GROUP BY common_server_ip having length(groupUniqArray(common_server_port))>3
+
+
+vpnunlimited_serverip:
+    vpn_service_name: vpnunlimited
+    plugin_id: 11
+    plugin_name: vpnunlimited_serverip
+    object_type: ip
+    confidence: confirmed
+    sql: SELECT DISTINCT common_server_ip FROM {$db_name}.{$table_name} WHERE {$time_filter} AND common_server_domain in ({$domain_list})
+    domains: hurriwhilealivo.club, comcatches.live, cyphyl.com, chinacitybit.click, valarre.com, puppyfood.info, securestartup.business, beansandchips.com, zigzagwand.art, wifimeshnet.cc, atomicspike.art, fastwaterblog.com, aspheric-zombies.club, godzillo.link, cyberroast.shop, seligmania-online.com, easy-2fa.us, ikitoshi.cc, webcitynews.com, prebreeze.club, blackbettyclothing.com, cyberanalytics.link, musicinst.link, adsoasis.xyz, holidayphoto.xyz, graphlist.dev, nohumguitar.com, coffeedaybreak.com, thewalruss.net, learnjapanfilms.cc, ezhyperlix.xyz, statsnet.group, hockeybet.org, fastblazingpix.com, zapp-a-weasel.live

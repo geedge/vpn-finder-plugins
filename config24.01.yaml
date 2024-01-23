@@ -129,3 +129,13 @@ turbovpn_serverip:
     security_table_name: security_event
     security_policy_id: 3847
     sql: SELECT server_ip FROM {$db_name}.{$security_table_name} WHERE {$time_filter} AND has(security_rule_list, {$security_policy_id}) AND server_port IN (66, 109, 8080, 97, 94, 92, 21, 25) GROUP BY server_ip having length(groupUniqArray(server_port))>3
+
+
+vpnunlimited_serverip:
+    vpn_service_name: vpnunlimited
+    plugin_id: 11
+    plugin_name: vpnunlimited_serverip
+    object_type: ip
+    confidence: confirmed
+    sql: SELECT DISTINCT server_ip FROM {$db_name}.{$table_name} WHERE {$time_filter} AND server_domain in ({$domain_list})
+    domains: hurriwhilealivo.club, comcatches.live, cyphyl.com, chinacitybit.click, valarre.com, puppyfood.info, securestartup.business, beansandchips.com, zigzagwand.art, wifimeshnet.cc, atomicspike.art, fastwaterblog.com, aspheric-zombies.club, godzillo.link, cyberroast.shop, seligmania-online.com, easy-2fa.us, ikitoshi.cc, webcitynews.com, prebreeze.club, blackbettyclothing.com, cyberanalytics.link, musicinst.link, adsoasis.xyz, holidayphoto.xyz, graphlist.dev, nohumguitar.com, coffeedaybreak.com, thewalruss.net, learnjapanfilms.cc, ezhyperlix.xyz, statsnet.group, hockeybet.org, fastblazingpix.com, zapp-a-weasel.live

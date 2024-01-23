@@ -18,6 +18,7 @@ from ivacyvpn_serverip import IvacyvpnServerip
 from ivacyvpn_servername import IvacyvpnServername
 
 from detection.vpnservices.turbovpn_serverip import TurbovpnServerip
+from vpnunlimited_serverip import VpnunlimitedServerip
 
 
 class TestHotspotvpnServerip(unittest.TestCase):
@@ -187,6 +188,26 @@ class TestTurbovpnServerip(unittest.TestCase):
                                                       plugin_name=self.turbovpn_detector.plugin_name,
                                                       output_filename=self.turbovpn_detector.output_file_name,
                                                       confidence=self.turbovpn_detector.confidence)
+
+
+class TestVpnunlimitedServerip(unittest.TestCase):
+
+    def setUp(self):
+        self.vpnunlimited_detector = VpnunlimitedServerip(start_time='2023-10-16 00:00:00',
+                                                  end_time='2023-10-19 00:00:00')
+
+    def test_get_vpnunlimited_serverip(self):
+        self.result = self.vpnunlimited_detector.find_server()
+        print(self.result)
+
+    def test_save_to_knowledgebase(self):
+        self.vpnunlimited_detector.save_to_knowledgebase(object_type='ip',
+                                                      object_list=self.vpnunlimited_detector.find_server(),
+                                                      vpn_service_name=self.vpnunlimited_detector.vpn_service_name,
+                                                      plugin_id=self.vpnunlimited_detector.plugin_id,
+                                                      plugin_name=self.vpnunlimited_detector.plugin_name,
+                                                      output_filename=self.vpnunlimited_detector.output_file_name,
+                                                      confidence=self.vpnunlimited_detector.confidence)
 
 
 if __name__ == '__main__':

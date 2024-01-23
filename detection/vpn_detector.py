@@ -209,6 +209,9 @@ if __name__ == '__main__':
     elif plugin_name == 'turbovpn_serverip':
         from vpnservices.turbovpn_serverip import TurbovpnServerip
         detector = TurbovpnServerip(start_time, end_time)
+    elif plugin_name == 'vpnunlimited_serverip':
+        from vpnservices.vpnunlimited_serverip import VpnunlimitedServerip
+        detector = VpnunlimitedServerip(start_time, end_time)
 
     else:
         print('Please input correct plugin name')
