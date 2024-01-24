@@ -139,3 +139,22 @@ vpnunlimited_serverip:
     confidence: confirmed
     sql: SELECT DISTINCT common_server_ip FROM {$db_name}.{$table_name} WHERE {$time_filter} AND common_server_domain in ({$domain_list})
     domains: hurriwhilealivo.club, comcatches.live, cyphyl.com, chinacitybit.click, valarre.com, puppyfood.info, securestartup.business, beansandchips.com, zigzagwand.art, wifimeshnet.cc, atomicspike.art, fastwaterblog.com, aspheric-zombies.club, godzillo.link, cyberroast.shop, seligmania-online.com, easy-2fa.us, ikitoshi.cc, webcitynews.com, prebreeze.club, blackbettyclothing.com, cyberanalytics.link, musicinst.link, adsoasis.xyz, holidayphoto.xyz, graphlist.dev, nohumguitar.com, coffeedaybreak.com, thewalruss.net, learnjapanfilms.cc, ezhyperlix.xyz, statsnet.group, hockeybet.org, fastblazingpix.com, zapp-a-weasel.live
+
+
+windscribevpn_servername:
+    vpn_service_name: windscribevpn
+    plugin_id: 12
+    plugin_name: windscribevpn_servername
+    object_type: domain
+    confidence: confirmed
+    sql: SELECT DISTINCT common_server_fqdn FROM {$db_name}.{$table_name} WHERE {$time_filter} and common_server_domain in ({$domain_list}) and common_server_fqdn like '%-%' ORDER BY common_server_fqdn ASC
+    domains: whiskergalaxy.com, totallyacdn.com
+
+
+windscribevpn_serverip:
+    vpn_service_name: windscribevpn
+    plugin_id: 13
+    plugin_name: windscribevpn_serverip
+    object_type: ip
+    confidence: confirmed
+    kb_sql: SELECT distinct domain FROM {$mariadb_dbname}.{$mariadb_domain_tablename} where vpn_service_name = 'windscribevpn'

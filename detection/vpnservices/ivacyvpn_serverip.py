@@ -7,10 +7,9 @@
 
 import sys
 
-from Functions import check_internet
-from MariadbTool import MariadbUtil
-
 sys.path.append('..')
+from tool.Functions import check_internet
+from tool.MariadbTool import MariadbUtil
 from vpn_detector import VpnDetector
 
 class IvacyvpnServerip(VpnDetector):

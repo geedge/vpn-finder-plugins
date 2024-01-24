@@ -27,11 +27,11 @@ class VpnunlimitedServerip(VpnDetector):
         self.end_time = end_time
 
         self.sql = self.plugin_config['sql']
-        self.masquerede_domains = ["'"+i.strip()+"'" for i in self.plugin_config['domains'].split(',')]
+        self.domains = ["'" + i.strip() + "'" for i in self.plugin_config['domains'].split(',')]
 
     def find_server(self):
         """
-        Get vpnunlimited server ip from clickhouse database
+        Get vpnunlimited server ip from session records
         :return: vpnunlimited server ip list
         """
         self.logger.info('Start to query vpnunlimited server ip from session records')
@@ -42,7 +42,7 @@ class VpnunlimitedServerip(VpnDetector):
             self.end_time)).replace("{$time_zone}", self.time_zone)
         self.sql = self.sql.replace("{$db_name}", self.dbname).replace("{$table_name}", self.table_name)
         self.sql = self.sql.replace("{$time_filter}", time_filter)
-        self.sql = self.sql.replace("{$domain_list}", ','.join(self.masquerede_domains))
+        self.sql = self.sql.replace("{$domain_list}", ','.join(self.domains))
 
         self.logger.info("Sql for {}: {}".format(self.plugin_name, self.sql))
 
@@ -56,7 +56,7 @@ class VpnunlimitedServerip(VpnDetector):
             self.logger.info('No vpnunlimited server ip found from session records')
             return []
         vpnunlimited_serverip_list = vpnunlimited_serverip_df[0].drop_duplicates().tolist()
-        self.logger.info('Query vpnunlimited server ip from clickhouse database successfully. {} items found'
+        self.logger.info('Query vpnunlimited server ip from session records successfully. {} items found'
                          .format(len(vpnunlimited_serverip_list)))
 
         return vpnunlimited_serverip_list

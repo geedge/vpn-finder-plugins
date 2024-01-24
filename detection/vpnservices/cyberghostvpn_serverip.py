@@ -16,8 +16,8 @@ class CyberghostvpnServerip(VpnDetector):
     This class is used to detect cyberghostvpn server ip
     """
 
-    def __init__(self, start_time, end_time):
-        super().__init__(start_time, end_time)
+    def __init__(self):
+        super().__init__('', '')
         self.plugin_config = self.load_config()['cyberghostvpn_serverip']
         self.plugin_id = self.plugin_config['plugin_id']
         self.plugin_name = self.plugin_config['plugin_name']
@@ -25,8 +25,6 @@ class CyberghostvpnServerip(VpnDetector):
         self.vpn_service_name = self.plugin_config['vpn_service_name']
         self.confidence = self.plugin_config['confidence']
         self.output_file_name = self.plugin_name + '_' + str(self.start_time).replace(' ', '_').replace(':', '')[:13] + '.csv'
-        self.start_time = start_time
-        self.end_time = end_time
 
         self.kb_sql = self.plugin_config['kb_sql']
         self.kb_dbname = self.config['knowledgebase']['db_name']

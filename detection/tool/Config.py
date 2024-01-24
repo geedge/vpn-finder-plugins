@@ -9,12 +9,12 @@ import yaml
 import os
 import sys
 
-import LoggingTool
 
 sys.path.append('..')
+from tool.LoggingTool import Logger
 from tool.Functions import get_project_path
 
-logger = LoggingTool.Logger().getLogger()
+logger = Logger().getLogger()
 
 
 class Config:

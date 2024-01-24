@@ -19,6 +19,8 @@ from ivacyvpn_servername import IvacyvpnServername
 
 from detection.vpnservices.turbovpn_serverip import TurbovpnServerip
 from vpnunlimited_serverip import VpnunlimitedServerip
+from windscribevpn_servername import WindscribevpnServername
+from windscribevpn_serverip import WindscribevpnServerip
 
 
 class TestHotspotvpnServerip(unittest.TestCase):
@@ -208,6 +210,45 @@ class TestVpnunlimitedServerip(unittest.TestCase):
                                                       plugin_name=self.vpnunlimited_detector.plugin_name,
                                                       output_filename=self.vpnunlimited_detector.output_file_name,
                                                       confidence=self.vpnunlimited_detector.confidence)
+
+class TestWindscribevpnServername(unittest.TestCase):
+
+    def setUp(self):
+        self.windscribevpn_detector = WindscribevpnServername(start_time='2024-01-16 00:00:00',
+                                                  end_time='2024-01-19 00:00:00')
+
+    def test_get_windscribevpn_servername(self):
+        self.result = self.windscribevpn_detector.find_server()
+        print(self.result)
+
+    def test_save_to_knowledgebase(self):
+        self.windscribevpn_detector.save_to_knowledgebase(object_type='domain',
+                                                      object_list=self.windscribevpn_detector.find_server(),
+                                                      vpn_service_name=self.windscribevpn_detector.vpn_service_name,
+                                                      plugin_id=self.windscribevpn_detector.plugin_id,
+                                                      plugin_name=self.windscribevpn_detector.plugin_name,
+                                                      output_filename=self.windscribevpn_detector.output_file_name,
+                                                      confidence=self.windscribevpn_detector.confidence)
+
+
+
+class TestWindscribevpnServerip(unittest.TestCase):
+
+        def setUp(self):
+            self.windscribevpn_detector = WindscribevpnServerip()
+
+        def test_get_windscribevpn_serverip(self):
+            self.result = self.windscribevpn_detector.find_server()
+            print(self.result)
+
+        def test_save_to_knowledgebase(self):
+            self.windscribevpn_detector.save_to_knowledgebase(object_type='ip',
+                                                        object_list=self.windscribevpn_detector.find_server(),
+                                                        vpn_service_name=self.windscribevpn_detector.vpn_service_name,
+                                                        plugin_id=self.windscribevpn_detector.plugin_id,
+                                                        plugin_name=self.windscribevpn_detector.plugin_name,
+                                                        output_filename=self.windscribevpn_detector.output_file_name,
+                                                        confidence=self.windscribevpn_detector.confidence)
 
 
 if __name__ == '__main__':
