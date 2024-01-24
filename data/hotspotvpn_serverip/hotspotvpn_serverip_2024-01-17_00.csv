@@ -1,0 +1,6 @@
+addr_format,ip1,ip2,plugin_id,plugin_name,vpn_service_name,method,confidence,is_valid
+Single,103.105.164.102,103.105.164.102,1,hotspotvpn_serverip,hotspotvpn,passive_ml,confirmed,1
+Single,104.244.42.65,104.244.42.65,1,hotspotvpn_serverip,hotspotvpn,passive_ml,confirmed,1
+Single,103.105.164.10,103.105.164.10,1,hotspotvpn_serverip,hotspotvpn,passive_ml,confirmed,1
+Single,139.28.216.29,139.28.216.29,1,hotspotvpn_serverip,hotspotvpn,passive_ml,confirmed,1
+Single,103.105.164.100,103.105.164.100,1,hotspotvpn_serverip,hotspotvpn,passive_ml,confirmed,1

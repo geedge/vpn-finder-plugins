@@ -1,5 +1,4 @@
 
-data/*
 .gitignore
 logs/*
 **/__pycache__/*
