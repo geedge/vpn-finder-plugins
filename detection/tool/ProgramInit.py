@@ -11,14 +11,11 @@ import os
 def dataFilerClear():
     # Clear detection1 data
     # print(os.path.join(os.getcwd()))
-    toolFunction.clear('PsiphonServerIP.txt')
-    toolFunction.clear_dir('logs/', git_keep=True)
-    toolFunction.clear_dir('data/feature', git_keep=True)
-    toolFunction.clear_dir('data/result', git_keep=True)
-    toolFunction.clear_dir('data/model/pic')
+    Functions.clear('PsiphonServerIP.txt')
+    Functions.clear_dir('logs/', git_keep=True)
+    # toolFunction.clear_dir('data/feature', git_keep=True)
+    # toolFunction.clear_dir('data/result', git_keep=True)
+    # toolFunction.clear_dir('data/model/pic')
 
-def modelClear():
-    os.remove("data/model/originModel.model")
-    os.remove('data/model/RFmodel.model')
 
 dataFilerClear()

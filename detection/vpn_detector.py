@@ -190,13 +190,13 @@ if __name__ == '__main__':
         detector = IpvanishvpnServername(start_time, end_time)
     elif plugin_name == 'ipvanishvpn_serverip':
         from vpnservices.ipvanishvpn_serverip import IpvanishvpnServerip
-        detector = IpvanishvpnServerip(start_time, end_time)
+        detector = IpvanishvpnServerip()
     elif plugin_name == 'cyberghostvpn_servername':
         from vpnservices.cyberghostvpn_servername import CyberghostvpnServername
         detector = CyberghostvpnServername(start_time, end_time)
     elif plugin_name == 'cyberghostvpn_serverip':
         from vpnservices.cyberghostvpn_serverip import CyberghostvpnServerip
-        detector = CyberghostvpnServerip(start_time, end_time)
+        detector = CyberghostvpnServerip()
     elif plugin_name == 'geckovpn_serverip':
         from vpnservices.geckovpn_serverip import GeckovpnServerip
         detector = GeckovpnServerip(start_time, end_time)
@@ -212,10 +212,17 @@ if __name__ == '__main__':
     elif plugin_name == 'vpnunlimited_serverip':
         from vpnservices.vpnunlimited_serverip import VpnunlimitedServerip
         detector = VpnunlimitedServerip(start_time, end_time)
+    elif plugin_name == 'windscribevpn_servername':
+        from vpnservices.windscribevpn_servername import WindscribevpnServername
+        detector = WindscribevpnServername(start_time, end_time)
+    elif plugin_name == 'windscribevpn_serverip':
+        from vpnservices.windscribevpn_serverip import WindscribevpnServerip
+        detector = WindscribevpnServerip()
 
     else:
         print('Please input correct plugin name')
         exit()
+
 
     result_list = detector.find_server()
     if len(result_list) > 0:
