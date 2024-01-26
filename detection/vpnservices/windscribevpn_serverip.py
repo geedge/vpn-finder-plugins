@@ -6,9 +6,11 @@
 # @Function:
 import re
 
+import sys
+sys.path.append('..')
 from statsmodels.datasets import check_internet
 
-from MariadbTool import MariadbUtil
+from tool.MariadbTool import MariadbUtil
 from vpn_detector import VpnDetector
 
 
