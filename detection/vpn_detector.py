@@ -218,6 +218,9 @@ if __name__ == '__main__':
     elif plugin_name == 'windscribevpn_serverip':
         from vpnservices.windscribevpn_serverip import WindscribevpnServerip
         detector = WindscribevpnServerip()
+    elif plugin_name == 'protonvpn_serverip':
+        from vpnservices.protonvpn_serverip import ProtonvpnServerip
+        detector = ProtonvpnServerip(start_time, end_time)
 
     else:
         print('Please input correct plugin name')
