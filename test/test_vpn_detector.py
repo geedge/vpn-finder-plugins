@@ -29,11 +29,11 @@ class TestVpnDetector(unittest.TestCase):
 
     def test_file_to_knowledgebase(self):
         object_list = []
-        with open('data/vpnunlimited_serverip/vpnunlimited_serverip_builtin.txt', 'r') as f:
+        with open('data/psiphon3_serverip/as12876_psiphon_builtin.txt', 'r') as f:
             for line in f.readlines():
                 object_list.append(line.strip())
 
-        self.vpn_detector.save_to_knowledgebase(object_type='ip', object_list=object_list, vpn_service_name='vpnunlimited',
-                                                plugin_name='vpnunlimited_serverip', plugin_id=8, output_filename='vpnunlimited_serverip_builtin.csv', confidence='confirmed')
+        self.vpn_detector.save_to_knowledgebase(object_type='ip', object_list=object_list, vpn_service_name='psiphon3vpn',
+                                                plugin_name='psiphon3vpn_serverip', plugin_id=4, output_filename='psiphon3vpn_serverip_builtin.csv', confidence='confirmed')
 
 

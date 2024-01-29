@@ -18,6 +18,7 @@ from ivacyvpn_serverip import IvacyvpnServerip
 from ivacyvpn_servername import IvacyvpnServername
 
 from detection.vpnservices.turbovpn_serverip import TurbovpnServerip
+from protonvpn_serverip import ProtonvpnServerip
 from vpnunlimited_serverip import VpnunlimitedServerip
 from windscribevpn_servername import WindscribevpnServername
 from windscribevpn_serverip import WindscribevpnServerip
@@ -249,6 +250,27 @@ class TestWindscribevpnServerip(unittest.TestCase):
                                                         plugin_name=self.windscribevpn_detector.plugin_name,
                                                         output_filename=self.windscribevpn_detector.output_file_name,
                                                         confidence=self.windscribevpn_detector.confidence)
+
+
+class TestProtonvpnServerip(unittest.TestCase):
+
+        def setUp(self):
+            self.protonvpn_detector = ProtonvpnServerip(start_time='2023-10-16 00:00:00',
+                                                    end_time='2023-10-30 00:00:00')
+
+        def test_get_protonvpn_serverip(self):
+            self.result = self.protonvpn_detector.find_server()
+            print(self.result)
+
+        def test_save_to_knowledgebase(self):
+            self.protonvpn_detector.save_to_knowledgebase(object_type='ip',
+                                                        object_list=self.protonvpn_detector.find_server(),
+                                                        vpn_service_name=self.protonvpn_detector.vpn_service_name,
+                                                        plugin_id=self.protonvpn_detector.plugin_id,
+                                                        plugin_name=self.protonvpn_detector.plugin_name,
+                                                        output_filename=self.protonvpn_detector.output_file_name,
+                                                        confidence=self.protonvpn_detector.confidence)
+
 
 
 if __name__ == '__main__':

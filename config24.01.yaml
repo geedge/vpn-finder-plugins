@@ -157,3 +157,12 @@ windscribevpn_serverip:
     object_type: ip
     confidence: confirmed
     kb_sql: SELECT distinct domain FROM {$mariadb_dbname}.{$mariadb_domain_tablename} where vpn_service_name = 'windscribevpn'
+
+
+protonvpn_serverip:
+    vpn_service_name: protonvpn
+    plugin_id: 14
+    plugin_name: protonvpn_serverip
+    object_type: ip
+    confidence: confirmed
+    sql: SELECT server_ip, groupUniqArray(server_port) AS ports FROM {$db_name}.{$table_name} WHERE {$time_filter} AND (server_port IN (443, 7770, 8443, 88, 5060, 51820, 500, 80, 1224, 4500, 4569, 5060, 1194)) GROUP BY server_ip HAVING length(ports) > 10
