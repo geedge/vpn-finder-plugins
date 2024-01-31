@@ -1,0 +1,7 @@
+domain,plugin_id,plugin_name,vpn_service_name,method,confidence,is_valid
+prox-ca.pointtoserver.com,3,ivacyvpn,ivacyvpn,passive_ml,confirmed,1
+ack-eu.pointtoserver.com,3,ivacyvpn,ivacyvpn,passive_ml,confirmed,1
+dc-619.pointtoserver.com,3,ivacyvpn,ivacyvpn,passive_ml,confirmed,1
+dc-656.pointtoserver.com,3,ivacyvpn,ivacyvpn,passive_ml,confirmed,1
+dc-281.pointtoserver.com,3,ivacyvpn,ivacyvpn,passive_ml,confirmed,1
+dc-671.pointtoserver.com,3,ivacyvpn,ivacyvpn,passive_ml,confirmed,1

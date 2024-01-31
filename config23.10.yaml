@@ -3,6 +3,7 @@ common:
     time_zone: Asia/Shanghai
     recv_time_columnname: common_recv_time
     time_filter_pattern: (recv_time_columnname> toDateTime('{$start_time}', '{$time_zone}')) AND(recv_time_columnname <= toDateTime('{$end_time}', '{$time_zone}'))
+    save_knowledgebase: True
 
 clickhouse:
     host: 192.168.40.194
@@ -37,93 +38,83 @@ knowledgebase:
 
 ### PLUGIN CONFIGS
 
-hotspotvpn_serverip:
+hotspotvpn:
+    plugin_name: hotspotvpn
     vpn_service_name: hotspotvpn
     plugin_id: 1
-    plugin_name: hotspotvpn_serverip
     object_type: ip
     confidence: confirmed
     sql: SELECT common_server_ip, any(common_server_asn) AS asn, count(*) AS session_num, groupUniqArray(common_server_domain) as domains, length(domains) as domain_count, countDistinct(common_client_ip) AS cip_num FROM {$db_name}.{$table_name} WHERE {$time_filter} AND (ssl_sni IN ({$domain_list})) GROUP BY common_server_ip having domain_count >= 3
     domains: paypal.com, facebook.com, twitter.com, whatsapp.com, get.adobe.com, cloudfront.net, mozilla.org
 
 
-ipvanishvpn_servername:
+ipvanishvpn:
+    plugin_name: ipvanishvpn
     vpn_service_name: ipvanishvpn
     plugin_id: 2
-    plugin_name: ipvanishvpn_servername
-    object_type: domain
     confidence: confirmed
-    sql: SELECT DISTINCT dns_qname FROM {$db_name}.{$table_name} WHERE {$time_filter} AND dns_qname LIKE '%.vpn.ipvanish.com'
+    domain:
+        object_type: domain
+        sql: SELECT DISTINCT dns_qname FROM {$db_name}.{$table_name} WHERE {$time_filter} AND dns_qname LIKE '%.vpn.ipvanish.com'
+    ip:
+        object_type: ip
+        kb_sql: SELECT distinct domain FROM {$mariadb_dbname}.{$mariadb_domain_tablename} where vpn_service_name = 'ipvanishvpn'
 
 
-ipvanishvpn_serverip:
-    vpn_service_name: ipvanishvpn
+ivacyvpn:
+    plugin_name: ivacyvpn
+    vpn_service_name: ivacyvpn
     plugin_id: 3
-    plugin_name: ipvanishvpn_serverip
-    object_type: ip
     confidence: confirmed
-    kb_sql: SELECT distinct domain FROM {$mariadb_dbname}.{$mariadb_domain_tablename} where vpn_service_name = 'ipvanishvpn'
+    domain:
+        object_type: domain
+        sql: SELECT DISTINCT dns_qname FROM {$db_name}.{$table_name} WHERE {$time_filter} AND dns_qname LIKE '%.pointtoserver.com'
+    ip:
+        object_type: ip
+        kb_sql: SELECT distinct domain FROM {$mariadb_dbname}.{$mariadb_domain_tablename} where vpn_service_name = 'ivacyvpn'
 
 
-psiphon3vpn_serverip:
-    vpn_service_name: psiphon3vpn
+protonvpn:
+    plugin_name: protonvpn
+    vpn_service_name: protonvpn
     plugin_id: 4
-    plugin_name: psiphon3vpn_serverip
     object_type: ip
-    confidence:
+    confidence: confirmed
+    sql: SELECT common_server_ip, groupUniqArray(common_server_port) AS ports FROM {$db_name}.{$table_name} WHERE {$time_filter} AND (common_server_port IN (443, 7770, 8443, 88, 5060, 51820, 500, 80, 1224, 4500, 4569, 5060, 1194)) GROUP BY common_server_ip HAVING length(ports) > 10
 
 
-cyberghostvpn_servername:
-    vpn_service_name: cyberghostvpn
+
+cyberghostvpn:
+    plugin_name: cyberghost
+    vpn_service_name: cyberghost
     plugin_id: 5
-    plugin_name: cyberghostvpn_servername
-    object_type: domain
     confidence: confirmed
-    sql: SELECT DISTINCT dns_qname FROM {$db_name}.{$table_name} WHERE {$time_filter} AND dns_qname LIKE '%.nodes.gen4.ninja'
+    domain:
+        object_type: domain
+        sql: SELECT DISTINCT dns_qname FROM {$db_name}.{$table_name} WHERE {$time_filter} AND dns_qname LIKE '%.nodes.gen4.ninja'
+    ip:
+        object_type: ip
+        kb_sql: SELECT distinct domain FROM {$mariadb_dbname}.{$mariadb_domain_tablename} where vpn_service_name = 'cyberghostvpn'
 
 
-cyberghostvpn_serverip:
-    vpn_service_name: cyberghostvpn
+windscribevpn:
+    plugin_name: windscribevpn
+    vpn_service_name: windscribevpn
     plugin_id: 6
-    plugin_name: cyberghostvpn_serverip
-    object_type: ip
     confidence: confirmed
-    kb_sql: SELECT distinct domain FROM {$mariadb_dbname}.{$mariadb_domain_tablename} where vpn_service_name = 'cyberghostvpn'
+    domain:
+        object_type: domain
+        sql: SELECT DISTINCT common_server_fqdn FROM {$db_name}.{$table_name} WHERE {$time_filter} and common_server_domain in ({$domain_list}) and common_server_fqdn like '%-%' ORDER BY common_server_fqdn ASC
+        domains: whiskergalaxy.com, totallyacdn.com
+    ip:
+        object_type: ip
+        kb_sql: SELECT distinct domain FROM {$mariadb_dbname}.{$mariadb_domain_tablename} where vpn_service_name = 'windscribevpn'
 
 
-geckovpn_serverip:
-    vpn_service_name: geckovpn
-    plugin_id: 7
-    plugin_name: geckovpn_serverip
-    object_type: ip
-    confidence: confirmed
-    sql: SELECT DISTINCT common_server_ip FROM {$db_name}.{$table_name} WHERE {$time_filter} AND ssl_cert_issuer like '%CN=SUV;O=SUV999%'
-
-
-
-ivacyvpn_servername:
-    vpn_service_name: ivacyvpn
-    plugin_id: 8
-    plugin_name: ivacyvpn_servername
-    object_type: domain
-    confidence: confirmed
-    sql: SELECT DISTINCT dns_qname FROM {$db_name}.{$table_name} WHERE {$time_filter} AND dns_qname LIKE '%.pointtoserver.com'
-
-
-
-ivacyvpn_serverip:
-    vpn_service_name: ivacyvpn
-    plugin_id: 9
-    plugin_name: ivacyvpn_serverip
-    object_type: ip
-    confidence: confirmed
-    kb_sql: SELECT distinct domain FROM {$mariadb_dbname}.{$mariadb_domain_tablename} where vpn_service_name = 'ivacyvpn'
-
-
-turbovpn_serverip:
+turbovpn:
     vpn_service_name: turbovpn
-    plugin_id: 10
-    plugin_name: turbovpn_serverip
+    plugin_id: 7
+    plugin_name: turbovpn
     object_type: ip
     confidence: confirmed
     security_table_name: security_event
@@ -131,39 +122,20 @@ turbovpn_serverip:
     sql: SELECT common_server_ip FROM {$db_name}.{$security_table_name} WHERE {$time_filter} AND common_policy_id ={$security_policy_id} AND common_server_port IN (66, 109, 8080, 97, 94, 92, 21, 25) GROUP BY common_server_ip having length(groupUniqArray(common_server_port))>3
 
 
-vpnunlimited_serverip:
+geckovpn:
+    vpn_service_name: geckovpn
+    plugin_id: 8
+    plugin_name: geckovpn
+    object_type: ip
+    confidence: confirmed
+    sql: SELECT DISTINCT common_server_ip FROM {$db_name}.{$table_name} WHERE {$time_filter} AND ssl_cert_issuer like '%CN=SUV;O=SUV999%'
+
+
+vpnunlimited:
     vpn_service_name: vpnunlimited
     plugin_id: 11
-    plugin_name: vpnunlimited_serverip
+    plugin_name: vpnunlimited
     object_type: ip
     confidence: confirmed
     sql: SELECT DISTINCT common_server_ip FROM {$db_name}.{$table_name} WHERE {$time_filter} AND common_server_domain in ({$domain_list})
     domains: hurriwhilealivo.club, comcatches.live, cyphyl.com, chinacitybit.click, valarre.com, puppyfood.info, securestartup.business, beansandchips.com, zigzagwand.art, wifimeshnet.cc, atomicspike.art, fastwaterblog.com, aspheric-zombies.club, godzillo.link, cyberroast.shop, seligmania-online.com, easy-2fa.us, ikitoshi.cc, webcitynews.com, prebreeze.club, blackbettyclothing.com, cyberanalytics.link, musicinst.link, adsoasis.xyz, holidayphoto.xyz, graphlist.dev, nohumguitar.com, coffeedaybreak.com, thewalruss.net, learnjapanfilms.cc, ezhyperlix.xyz, statsnet.group, hockeybet.org, fastblazingpix.com, zapp-a-weasel.live
-
-
-windscribevpn_servername:
-    vpn_service_name: windscribevpn
-    plugin_id: 12
-    plugin_name: windscribevpn_servername
-    object_type: domain
-    confidence: confirmed
-    sql: SELECT DISTINCT common_server_fqdn FROM {$db_name}.{$table_name} WHERE {$time_filter} and common_server_domain in ({$domain_list}) and common_server_fqdn like '%-%' ORDER BY common_server_fqdn ASC
-    domains: whiskergalaxy.com, totallyacdn.com
-
-
-windscribevpn_serverip:
-    vpn_service_name: windscribevpn
-    plugin_id: 13
-    plugin_name: windscribevpn_serverip
-    object_type: ip
-    confidence: confirmed
-    kb_sql: SELECT distinct domain FROM {$mariadb_dbname}.{$mariadb_domain_tablename} where vpn_service_name = 'windscribevpn'
-
-
-protonvpn_serverip:
-    vpn_service_name: protonvpn
-    plugin_id: 14
-    plugin_name: protonvpn_serverip
-    object_type: ip
-    confidence: confirmed
-    sql: SELECT common_server_ip, groupUniqArray(common_server_port) AS ports FROM {$db_name}.{$table_name} WHERE {$time_filter} AND (common_server_port IN (443, 7770, 8443, 88, 5060, 51820, 500, 80, 1224, 4500, 4569, 5060, 1194)) GROUP BY common_server_ip HAVING length(ports) > 10

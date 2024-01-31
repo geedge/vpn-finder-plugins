@@ -20,6 +20,21 @@ from tool.KnowledgeBaseTool import KnowledgeApi
 import concurrent.futures
 
 
+class ServerGroup:
+    """
+    This class is used to define server group object for saving different types of detection results
+    """
+    def __init__(self, object_type, server_list, output_file_name):
+        self.object_type = object_type
+        self.server_list = server_list
+        self.output_file_name = output_file_name
+
+
+    def add_server(self, server):
+        self.server_list.append(server)
+
+
+
 class VpnDetector:
     """
     This class is the parent class of various vpn classes in file vpnservices
@@ -84,19 +99,21 @@ class VpnDetector:
 
         # result save
         if len(result_df) > 0:
-            self.logger.info('Start to update data to knowledgebase')
+
+            self.logger.info('[{}] - Start to save result.'.format(plugin_name))
             result_path = os.path.join('data', plugin_name)
             if not os.path.exists(result_path):
                 os.makedirs(result_path)
             result_file = os.path.join(result_path, output_filename)
             result_df.to_csv(result_file, index=False)
-            self.logger.info('Write {} {} {} to local file {} successfully.'.format(len(result_df), vpn_service_name, object_type, result_file))
+            self.logger.info('[{}] - Write {} {} {} to local file {} successfully.'.format(plugin_name, len(result_df), vpn_service_name, object_type, result_file))
 
-            # update to knowledgebase
-            knowledge_api = KnowledgeApi(self.config)
-            self.logger.info('[Updating knowledgebase]- {} num:{}'.format(object_type, len(object_list)))
-            description_str = "Update {} record(s).".format(len(object_list))
-            knowledge_api.file_import(result_file, knowledge_id, 'update', description_str)
+            if self.config['common']['save_knowledgebase']:
+                # update to knowledgebase
+                knowledge_api = KnowledgeApi(self.config)
+                self.logger.info('[{}] - [Updating knowledgebase]- {} num:{}'.format(plugin_name, object_type, len(object_list)))
+                description_str = "Update {} record(s).".format(len(object_list))
+                knowledge_api.file_import(result_file, knowledge_id, 'update', description_str)
 
 
 
@@ -182,61 +199,53 @@ if __name__ == '__main__':
 
 
     detector = None
-    if plugin_name == 'hotspotvpn_serverip':
-        from vpnservices.hotspotvpn_serverip import HotspotvpnServerip
-        detector = HotspotvpnServerip(start_time, end_time)
-    elif plugin_name == 'ipvanishvpn_servername':
-        from vpnservices.ipvanishvpn_servername import IpvanishvpnServername
-        detector = IpvanishvpnServername(start_time, end_time)
-    elif plugin_name == 'ipvanishvpn_serverip':
-        from vpnservices.ipvanishvpn_serverip import IpvanishvpnServerip
-        detector = IpvanishvpnServerip()
-    elif plugin_name == 'cyberghostvpn_servername':
-        from vpnservices.cyberghostvpn_servername import CyberghostvpnServername
-        detector = CyberghostvpnServername(start_time, end_time)
-    elif plugin_name == 'cyberghostvpn_serverip':
-        from vpnservices.cyberghostvpn_serverip import CyberghostvpnServerip
-        detector = CyberghostvpnServerip()
-    elif plugin_name == 'geckovpn_serverip':
-        from vpnservices.geckovpn_serverip import GeckovpnServerip
-        detector = GeckovpnServerip(start_time, end_time)
-    elif plugin_name == 'ivacyvpn_servername':
-        from vpnservices.ivacyvpn_servername import IvacyvpnServername
-        detector = IvacyvpnServername(start_time, end_time)
-    elif plugin_name == 'ivacyvpn_serverip':
-        from vpnservices.ivacyvpn_serverip import IvacyvpnServerip
-        detector = IvacyvpnServerip(start_time, end_time)
-    elif plugin_name == 'turbovpn_serverip':
-        from vpnservices.turbovpn_serverip import TurbovpnServerip
-        detector = TurbovpnServerip(start_time, end_time)
-    elif plugin_name == 'vpnunlimited_serverip':
-        from vpnservices.vpnunlimited_serverip import VpnunlimitedServerip
-        detector = VpnunlimitedServerip(start_time, end_time)
-    elif plugin_name == 'windscribevpn_servername':
-        from vpnservices.windscribevpn_servername import WindscribevpnServername
-        detector = WindscribevpnServername(start_time, end_time)
-    elif plugin_name == 'windscribevpn_serverip':
-        from vpnservices.windscribevpn_serverip import WindscribevpnServerip
-        detector = WindscribevpnServerip()
-    elif plugin_name == 'protonvpn_serverip':
-        from vpnservices.protonvpn_serverip import ProtonvpnServerip
-        detector = ProtonvpnServerip(start_time, end_time)
-
+    if plugin_name == 'hotspotvpn':
+        from vpnservices.hotspotvpn import Hotspotvpn
+        detector = Hotspotvpn(start_time, end_time)
+    elif plugin_name == 'ipvanishvpn':
+        from vpnservices.ipvanishvpn import Ipvanishvpn
+        detector = Ipvanishvpn(start_time, end_time)
+    elif plugin_name == 'ivacyvpn':
+        from vpnservices.ivacyvpn import Ivacyvpn
+        detector = Ivacyvpn(start_time, end_time)
+    elif plugin_name == 'protonvpn':
+        from vpnservices.protonvpn import Protonvpn
+        detector = Protonvpn(start_time, end_time)
+    elif plugin_name == 'cyberghostvpn':
+        from vpnservices.cyberghostvpn import Cyberghostvpn
+        detector = Cyberghostvpn(start_time, end_time)
+    elif plugin_name == 'windscribevpn':
+        from vpnservices.windscribevpn import Windscribevpn
+        detector = Windscribevpn(start_time, end_time)
+    elif plugin_name == 'turbovpn':
+        from vpnservices.turbovpn import Turbovpn
+        detector = Turbovpn(start_time, end_time)
+    elif plugin_name == 'geckovpn':
+        from vpnservices.geckovpn import Geckovpn
+        detector = Geckovpn(start_time, end_time)
+    elif plugin_name == 'vpnunlimited':
+        from vpnservices.vpnunlimited import Vpnunlimited
+        detector = Vpnunlimited(start_time, end_time)
     else:
         print('Please input correct plugin name')
         exit()
 
 
-    result_list = detector.find_server()
-    if len(result_list) > 0:
-        detector.save_to_knowledgebase(result_list, detector.object_type,
-                                   detector.vpn_service_name, detector.plugin_id,
-                                   detector.plugin_name, detector.output_file_name, detector.confidence)
-        # Output logs to record the amount of data written, plugin id, plugin name and other information
-        detector.logger.info(
-            'Write {} {} to knowledgebase successfully. {} items found'.format(detector.vpn_service_name,
-                                                                               detector.object_type,
-                                                                               len(result_list)))
+    result_group = detector.find_server()
+    for server_group in result_group:
+        result_list = server_group.server_list
+        if len(result_list) > 0:
+            detector.save_to_knowledgebase(result_list, server_group.object_type,
+                                           detector.vpn_service_name, detector.plugin_id,
+                                           detector.plugin_name,
+                                           server_group.output_file_name,
+                                           detector.confidence)
+
+            # Output logs to record the amount of data written, plugin id, plugin name and other information
+            detector.logger.info(
+                '[{}] - Write {} {} to knowledgebase successfully.'.format(detector.plugin_name,
+                                                                                          len(result_list),
+                                                                                          server_group.object_type))
 
 
 
