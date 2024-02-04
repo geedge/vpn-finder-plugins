@@ -10,9 +10,7 @@ import yaml
 import logging.config
 import sys
 sys.path.append('..')
-from tool.Functions import get_project_path
-
-
+from Functions import get_project_path
 
 
 class Logger:

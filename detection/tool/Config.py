@@ -8,11 +8,10 @@
 import yaml
 import os
 import sys
-
-
 sys.path.append('..')
-from tool.LoggingTool import Logger
-from tool.Functions import get_project_path
+
+from LoggingTool import Logger
+from Functions import get_project_path
 
 logger = Logger().getLogger()
 
@@ -40,11 +39,3 @@ class Config:
             print(e)
             sys.exit()
 
-
-
-
-if __name__ == '__main__':
-    config = Config().config
-    print(config)
-    print(config['time_zone'])
-    print(config['sql']['cyberghost']['sql_tsg'])

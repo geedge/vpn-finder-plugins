@@ -8,6 +8,10 @@ common:
         max_workers: 10
         max_calls_per_sec: 10
 
+monitor:
+    monitor_file_path: /opt/vpn-thwarting/vpn_knolwdgebase_monitor.prom
+    outdated_days: 100 # outdated after Inactive for days. outdated results will not be monitored as effective results
+    timezone_hour_gap: 8
 
 clickhouse:
     host: 192.168.40.194
