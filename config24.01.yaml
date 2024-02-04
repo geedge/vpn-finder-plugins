@@ -4,6 +4,10 @@ common:
     recv_time_columnname: recv_time
     time_filter_pattern: (recv_time_columnname> toDateTime('{$start_time}', '{$time_zone}')) AND(recv_time_columnname <= toDateTime('{$end_time}', '{$time_zone}'))
     save_knowledgebase: False
+    active_scan:  # max calls/s (rough estimate) = max workers * max_call_per_sec
+        max_workers: 10
+        max_calls_per_sec: 10
+
 
 clickhouse:
     host: 192.168.44.30

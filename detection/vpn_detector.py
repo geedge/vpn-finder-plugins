@@ -7,9 +7,11 @@
 import argparse
 import datetime
 import socket
-
 import sys
 import os
+
+from ratelimiter import RateLimiter
+
 sys.path.append('..')
 
 import pandas as pd
@@ -135,25 +137,22 @@ class VpnDetector:
 
 
 
-    def resolve_dns_for_domain_list(self, domain_list, max_workers=100):
-        """
-        Resolve domain list to ip list
-        :param domain_list:
-        :param max_workers:
-        :return:
-        """
+    def resolve_dns_for_domain_list(self, domain_list, max_workers=2, max_calls_per_second=5):
+        rate_limiter = RateLimiter(max_calls=max_calls_per_second, period=1)
         results = []
         with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
             futures = [executor.submit(self.get_resolved_addr, domain) for domain in domain_list]
             for future in concurrent.futures.as_completed(futures):
                 try:
-                    server_name, resolved_addr = future.result()
-                    if resolved_addr is not None:
-                        results.extend(resolved_addr)
+                    with rate_limiter:
+                        server_name, resolved_addr = future.result()
+                        if resolved_addr is not None:
+                            results.extend(resolved_addr)
                 except Exception as e:
                     self.logger.error(e)
 
         return results
+
 
 
 # 入口函数定义
@@ -246,8 +245,5 @@ if __name__ == '__main__':
                 '[{}] - Write {} {} to knowledgebase successfully.'.format(detector.plugin_name,
                                                                                           len(result_list),
                                                                                           server_group.object_type))
-
-
-
 
 
