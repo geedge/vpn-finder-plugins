@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # @Time    : 2024/1/31 19:41
 # @author    : yinjinagyi
-# @File    : KnowledgeBaseMonitor.py
+# @File    : knowledgebase_monitor.py
 # @Function:
 import argparse
 import datetime

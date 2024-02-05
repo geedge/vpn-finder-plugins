@@ -10,8 +10,8 @@ common:
         max_calls_per_sec: 10
 
 monitor:
-    monitor_file_path: /Users/joy/Downloads/vpn_thwarting_monitor.prom
-#    monitor_file_path: /home/tsg/olap/galaxy/volumes/node-exporter/prom/vpn_plugin_knowledgebase_monitor.prom
+#    monitor_file_path: /Users/joy/Downloads/vpn_thwarting_monitor.prom
+    monitor_file_path: /home/tsg/olap/galaxy/volumes/node-exporter/prom/vpn_plugin_knowledgebase_monitor.prom
     outdated_days: 100 # outdated after Inactive for days. outdated results will not be monitored as effective results
     timezone_hour_gap: 8
 
