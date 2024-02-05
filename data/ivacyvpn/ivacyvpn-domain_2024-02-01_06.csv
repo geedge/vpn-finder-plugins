@@ -1,0 +1,12 @@
+domain,plugin_id,plugin_name,vpn_service_name,method,confidence,is_valid
+dc-660.pointtoserver.com,3,ivacyvpn,ivacyvpn,passive_ml,confirmed,1
+dc-666.pointtoserver.com,3,ivacyvpn,ivacyvpn,passive_ml,confirmed,1
+dc-585.pointtoserver.com,3,ivacyvpn,ivacyvpn,passive_ml,confirmed,1
+dc-293.pointtoserver.com,3,ivacyvpn,ivacyvpn,passive_ml,confirmed,1
+dc-555.pointtoserver.com,3,ivacyvpn,ivacyvpn,passive_ml,confirmed,1
+dc-408.pointtoserver.com,3,ivacyvpn,ivacyvpn,passive_ml,confirmed,1
+dc-364.pointtoserver.com,3,ivacyvpn,ivacyvpn,passive_ml,confirmed,1
+dc-84.pointtoserver.com,3,ivacyvpn,ivacyvpn,passive_ml,confirmed,1
+dc-295.pointtoserver.com,3,ivacyvpn,ivacyvpn,passive_ml,confirmed,1
+dc-186.pointtoserver.com,3,ivacyvpn,ivacyvpn,passive_ml,confirmed,1
+dc-487.pointtoserver.com,3,ivacyvpn,ivacyvpn,passive_ml,confirmed,1

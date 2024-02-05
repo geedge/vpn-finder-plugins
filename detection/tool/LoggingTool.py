@@ -5,12 +5,11 @@
 # @File    : LoggingTool.py
 # @Function:
 
-
 import yaml
 import logging.config
 import sys
 sys.path.append('..')
-from Functions import get_project_path
+from tool.Functions import get_project_path
 
 
 class Logger:

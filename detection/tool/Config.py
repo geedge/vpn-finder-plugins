@@ -10,8 +10,8 @@ import os
 import sys
 sys.path.append('..')
 
-from LoggingTool import Logger
-from Functions import get_project_path
+from tool.LoggingTool import Logger
+from tool.Functions import get_project_path
 
 logger = Logger().getLogger()
 

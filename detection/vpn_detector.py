@@ -46,7 +46,7 @@ class VpnDetector:
         self.config = self.load_config()
         self.output_file_path = self.config['common']['output_path']
         self.logger = Logger().getLogger()
-        self.kb = KnowledgeApi(self.config)
+        self.kb = KnowledgeApi(self.config['knowledgebase'])
         self.start_time = start_time
         self.end_time = end_time
         self.time_zone = self.config['common']['time_zone']

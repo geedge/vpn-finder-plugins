@@ -141,7 +141,7 @@ geckovpn:
 
 vpnunlimited:
     vpn_service_name: vpnunlimited
-    plugin_id: 11
+    plugin_id: 9
     plugin_name: vpnunlimited
     object_type: ip
     confidence: confirmed

@@ -5,12 +5,13 @@ common:
     time_filter_pattern: (recv_time_columnname> toDateTime('{$start_time}', '{$time_zone}')) AND(recv_time_columnname <= toDateTime('{$end_time}', '{$time_zone}'))
     save_knowledgebase: False
     active_scan:  # max calls/s (rough estimate) = max workers * max_call_per_sec
+        switch: off
         max_workers: 10
         max_calls_per_sec: 10
 
 monitor:
-#    monitor_file_path: /Users/joy/Downloads/vpn_thwarting_monitor.prom
-    monitor_file_path: /opt/vpn-thwarting/vpn_knolwdgebase_monitor.prom
+    monitor_file_path: /Users/joy/Downloads/vpn_thwarting_monitor.prom
+#    monitor_file_path: /home/tsg/olap/galaxy/volumes/node-exporter/prom/vpn_plugin_knowledgebase_monitor.prom
     outdated_days: 100 # outdated after Inactive for days. outdated results will not be monitored as effective results
     timezone_hour_gap: 8
 

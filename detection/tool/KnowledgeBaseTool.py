@@ -10,9 +10,12 @@ import sys
 import time
 from warnings import simplefilter
 import requests
-import LoggingTool
+import sys
+sys.path.append('..')
 
-logger = LoggingTool.Logger().getLogger()
+from tool.LoggingTool import Logger
+
+logger = Logger().getLogger()
 simplefilter(action='ignore', category=FutureWarning)
 
 

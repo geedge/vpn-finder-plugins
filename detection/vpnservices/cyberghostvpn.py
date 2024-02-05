@@ -118,7 +118,7 @@ class CyberghostvpnServerip(VpnDetector):
             servername_list = [i[0] for i in query_result]
 
         # 判断是否能够访问外网，如果能够访问外网，则从外网获取cyberghost_servername_list的域名解析地址
-        if check_internet():
+        if self.config['common']['active_scan']['switch']=='on' and check_internet():
             servername_list = self.find_more_servernames(servername_list)
             if len(servername_list) > 0:
                 resolved_ip_list = self.resolve_dns_for_domain_list(servername_list)

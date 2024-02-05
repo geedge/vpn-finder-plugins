@@ -2,21 +2,14 @@
 # -*- coding: utf-8 -*-
 # @Time    : 2024/1/31 19:41
 # @author    : yinjinagyi
-# @File    : knowlegebase_monitor.py
+# @File    : KnowledgeBaseMonitor.py
 # @Function:
 import argparse
 import datetime
 import numpy as np
 
-import sys
-import os
-
-import pandas as pd
-
-sys.path.append(os.getcwd() + '/detection/tool')
-
-from Config import Config
-from KnowledgeBaseTool import KnowledgeApi, logger
+from tool.Config import Config
+from tool.KnowledgeBaseTool import KnowledgeApi, logger
 
 
 class KnowledgeBaseMonitor:
@@ -192,7 +185,7 @@ if __name__ == '__main__':
             file.write("")
         for item in monitor_result_dict.items():
             with open(monitor_file, "a") as file:
-                file.write('vpn_knowledgebase_monitor_' + item[0] + ' ' + str(item[1]) + '\n')
+                file.write(item[0] + ' ' + str(item[1]) + '\n')
                 logger.info("[Monitor] {}~{} -{} {}".format(start_time, end_time, item[0], str(item[1])))
 
 
