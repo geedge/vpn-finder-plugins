@@ -1,5 +1,4 @@
 clickhouse_driver==0.2.6
-codev==0.7.4a3
 numpy==1.23.5
 pandas==2.0.1
 pymysql==1.1.0

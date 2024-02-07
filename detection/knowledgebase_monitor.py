@@ -64,7 +64,7 @@ class KnowledgeBaseMonitor:
             q += " and {} < '{}'".format(time_column, end_t)
 
         q = q.lstrip(' and')
-        # print(q)
+        print(vpn_service, q)
         count_num = self.knowledgebase_tool.get_knowledgebase_count(knowledge_id=library_id, q=q)
         return count_num
 

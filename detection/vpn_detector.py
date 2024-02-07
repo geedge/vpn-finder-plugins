@@ -112,7 +112,7 @@ class VpnDetector:
 
             if self.config['common']['save_knowledgebase']:
                 # update to knowledgebase
-                knowledge_api = KnowledgeApi(self.config)
+                knowledge_api = KnowledgeApi(self.config['knowledgebase'])
                 self.logger.info('[{}] - [Updating knowledgebase]- {} num:{}'.format(plugin_name, object_type, len(object_list)))
                 description_str = "Update {} record(s).".format(len(object_list))
                 knowledge_api.file_import(result_file, knowledge_id, 'update', description_str)
