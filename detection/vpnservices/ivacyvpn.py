@@ -100,7 +100,7 @@ class IvacyvpnServerip(VpnDetector):
         server_name_list.extend([f"dc-{str(index)}.pointtoserver.com" for index in range(1000)])
         server_name_list = list(set(server_name_list))
 
-        if self.config['common']['active_scan']['switch']=='on' and check_internet():
+        if self.config['common']['active_scan']['switch'] and check_internet():
             server_ip_list = self.resolve_dns_for_domain_list(server_name_list)
             if server_ip_list:
                 server_ip_list = list(set(server_ip_list))
