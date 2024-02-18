@@ -5,8 +5,8 @@ common:
     time_filter_pattern: (recv_time_columnname> toDateTime('{$start_time}', '{$time_zone}')) AND(recv_time_columnname <= toDateTime('{$end_time}', '{$time_zone}'))
     save_knowledgebase: True
     active_scan:  # max calls/s (rough estimate) = max workers * max_call_per_sec
-        switch: off
-        max_workers: 10
+        switch: on
+        max_workers: 100
         max_calls_per_sec: 10
 
 monitor:
@@ -93,10 +93,10 @@ protonvpn:
     sql: SELECT server_ip, groupUniqArray(server_port) AS ports FROM {$db_name}.{$table_name} WHERE {$time_filter} AND (server_port IN (443, 7770, 8443, 88, 5060, 51820, 500, 80, 1224, 4500, 4569, 5060, 1194)) GROUP BY server_ip HAVING length(ports) > 10
 
 
-
+# tsg系统内置Cyberghost-UDP APP获取新增活跃IP
 cyberghostvpn:
-    plugin_name: cyberghost
-    vpn_service_name: cyberghost
+    plugin_name: cyberghostvpn
+    vpn_service_name: cyberghostvpn
     plugin_id: 5
     confidence: confirmed
     domain:
@@ -105,6 +105,8 @@ cyberghostvpn:
     ip:
         object_type: ip
         kb_sql: SELECT distinct domain FROM {$mariadb_dbname}.{$mariadb_domain_tablename} where vpn_service_name = 'cyberghostvpn'
+        udp_monitor_app_name: Cyberghost-UDP
+        sql: SELECT DISTINCT server_ip FROM {$db_name}.{$table_name} WHERE {$time_filter} and app_transition like '%{$udp_monitor_app_name}%'
 
 
 windscribevpn:
@@ -119,7 +121,6 @@ windscribevpn:
     ip:
         object_type: ip
         kb_sql: SELECT distinct domain FROM {$mariadb_dbname}.{$mariadb_domain_tablename} where vpn_service_name = 'windscribevpn'
-
 
 turbovpn:
     vpn_service_name: turbovpn

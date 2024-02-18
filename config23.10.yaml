@@ -7,7 +7,7 @@ common:
     active_scan: # max calls/s (rough estimate) = max workers * max_call_per_sec
         switch: on
         max_workers: 10
-        max_calls_per_sec: 10
+        max_calls_per_sec: 1000
 
 monitor:
     monitor_file_path: /opt/vpn-thwarting/vpn_knolwdgebase_monitor.prom
@@ -104,6 +104,8 @@ cyberghostvpn:
     ip:
         object_type: ip
         kb_sql: SELECT distinct domain FROM {$mariadb_dbname}.{$mariadb_domain_tablename} where vpn_service_name = 'cyberghostvpn'
+        udp_monitor_app_name: Cyberghost-UDP
+        sql: SELECT DISTINCT common_server_ip FROM {$db_name}.{$table_name} WHERE {$time_filter} and application_full_path like '%{$udp_monitor_app_name}%'
 
 
 windscribevpn:
