@@ -64,7 +64,7 @@ class KnowledgeBaseMonitor:
             q += " and {} < '{}'".format(time_column, end_t)
 
         q = q.lstrip(' and')
-        print(vpn_service, q)
+        # print(vpn_service, q)
         count_num = self.knowledgebase_tool.get_knowledgebase_count(knowledge_id=library_id, q=q)
         return count_num
 
@@ -76,13 +76,13 @@ class KnowledgeBaseMonitor:
         if vpn_service is None: vpn_service='all'
 
         # cycle active
-        kb_metric['{}_active_ip_count'.format(vpn_service)] = self.get_vpn_count(node_type='ip', mode='active', timezone_gap_hour=time_zone_gap,
+        kb_metric['active_ip_count{{type="{}"}}'.format(vpn_service)] = self.get_vpn_count(node_type='ip', mode='active', timezone_gap_hour=time_zone_gap,
                                                                 start_t=start_time, end_t=end_time, vpn_service=vpn_service)
-        kb_metric['{}_new_ip_count'.format(vpn_service)] = self.get_vpn_count(node_type='ip', mode='new', timezone_gap_hour=time_zone_gap,
+        kb_metric['new_ip_count{{type="{}"}}'.format(vpn_service)] = self.get_vpn_count(node_type='ip', mode='new', timezone_gap_hour=time_zone_gap,
                                                                               start_t=start_time, end_t=end_time, vpn_service=vpn_service)
-        kb_metric['{}_active_domain_count'.format(vpn_service)] = self.get_vpn_count(node_type='domain', mode='active', timezone_gap_hour=time_zone_gap,
+        kb_metric['active_domain_count{{type="{}"}}'.format(vpn_service)] = self.get_vpn_count(node_type='domain', mode='active', timezone_gap_hour=time_zone_gap,
                                                                 start_t=start_time, end_t=end_time, vpn_service=vpn_service)
-        kb_metric['{}_new_domain_count'.format(vpn_service)] = self.get_vpn_count(node_type='domain', mode='new', timezone_gap_hour=time_zone_gap,
+        kb_metric['new_domain_count{{type="{}"}}'.format(vpn_service)] = self.get_vpn_count(node_type='domain', mode='new', timezone_gap_hour=time_zone_gap,
                                                              start_t=start_time, end_t=end_time, vpn_service=vpn_service)
 
 
@@ -109,32 +109,32 @@ class KnowledgeBaseMonitor:
         if vpn_service is None: vpn_service = 'all'
 
         # all
-        kb_metric['{}_ip_count'.format(vpn_service)] = self.get_vpn_count(node_type='ip', timezone_gap_hour=time_zone_gap, vpn_service=vpn_service)
-        kb_metric['{}_domain_count'.format(vpn_service)] = self.get_vpn_count(node_type='domain', timezone_gap_hour=time_zone_gap, vpn_service=vpn_service)
+        kb_metric['ip_count{{type="{}"}}'.format(vpn_service)] = self.get_vpn_count(node_type='ip', timezone_gap_hour=time_zone_gap, vpn_service=vpn_service)
+        kb_metric['domain_count{{type="{}"}}'.format(vpn_service)] = self.get_vpn_count(node_type='domain', timezone_gap_hour=time_zone_gap, vpn_service=vpn_service)
 
         # all active in like 7 days
         t = (datetime.datetime.now().replace(minute=0, second=0, microsecond=0)
              - datetime.timedelta(days=self.monitor_config['outdated_days'])).strftime("%Y-%m-%d %H:%M:%S")
-        kb_metric['{}_active_ip_count'.format(vpn_service)] = self.get_vpn_count(node_type='ip', mode='active', timezone_gap_hour=time_zone_gap, start_t=t, vpn_service=vpn_service)
-        kb_metric['{}_active_domain_count'.format(vpn_service)] = self.get_vpn_count(node_type='domain', mode='active', timezone_gap_hour=time_zone_gap, start_t=t, vpn_service=vpn_service)
+        kb_metric['active_ip_count{{type="{}"}}'.format(vpn_service)] = self.get_vpn_count(node_type='ip', mode='active', timezone_gap_hour=time_zone_gap, start_t=t, vpn_service=vpn_service)
+        kb_metric['active_domain_count{{type="{}"}}'.format(vpn_service)] = self.get_vpn_count(node_type='domain', mode='active', timezone_gap_hour=time_zone_gap, start_t=t, vpn_service=vpn_service)
 
 
         # cycle active
-        kb_metric['{}_cycle_active_ip_count'.format(vpn_service)] = self.get_vpn_count(node_type='ip', mode='active', timezone_gap_hour=time_zone_gap,
+        kb_metric['cycle_active_ip_count{{type="{}"}}'.format(vpn_service)] = self.get_vpn_count(node_type='ip', mode='active', timezone_gap_hour=time_zone_gap,
                                                                 start_t=current_start_time, end_t=current_end_time, vpn_service=vpn_service)
-        kb_metric['{}_cycle_new_ip_count'.format(vpn_service)] = self.get_vpn_count(node_type='ip', mode='new', timezone_gap_hour=time_zone_gap,
+        kb_metric['cycle_new_ip_count{{type="{}"}}'.format(vpn_service)] = self.get_vpn_count(node_type='ip', mode='new', timezone_gap_hour=time_zone_gap,
                                                                 start_t=current_start_time, end_t=current_end_time, vpn_service=vpn_service)
-        kb_metric['{}_cycle_active_domain_count'.format(vpn_service)] = self.get_vpn_count(node_type='domain', mode='active', timezone_gap_hour=time_zone_gap,
+        kb_metric['cycle_active_domain_count{{type="{}"}}'.format(vpn_service)] = self.get_vpn_count(node_type='domain', mode='active', timezone_gap_hour=time_zone_gap,
                                                                 start_t=current_start_time, end_t=current_end_time, vpn_service=vpn_service)
-        kb_metric['{}_cycle_new_domain_count'.format(vpn_service)] = self.get_vpn_count(node_type='domain', mode='new', timezone_gap_hour=time_zone_gap,
+        kb_metric['cycle_new_domain_count{{type="{}"}}'.format(vpn_service)] = self.get_vpn_count(node_type='domain', mode='new', timezone_gap_hour=time_zone_gap,
                                                              start_t=current_start_time, end_t=current_end_time, vpn_service=vpn_service)
 
 
         # churn ratio = (# new in current cycle)/(# all active)
-        kb_metric['{}_cycle_ip_churn_ratio'.format(vpn_service)] = np.round(kb_metric['{}_cycle_new_ip_count'.format(vpn_service)]/kb_metric['{}_active_ip_count'.format(vpn_service)], 4) \
-            if kb_metric['{}_active_ip_count'.format(vpn_service)] > 0 else 0
-        kb_metric['{}_cycle_domain_churn_ratio'.format(vpn_service)] = np.round(kb_metric['{}_cycle_new_domain_count'.format(vpn_service)] / kb_metric['{}_active_domain_count'.format(vpn_service)], 4) \
-            if kb_metric['{}_active_domain_count'.format(vpn_service)] > 0 else 0
+        kb_metric['cycle_ip_churn_ratio{{type="{}"}}'.format(vpn_service)] = np.round(kb_metric['cycle_new_ip_count{{type="{}"}}'.format(vpn_service)]/kb_metric['active_ip_count{{type="{}"}}'.format(vpn_service)], 4) \
+            if kb_metric['active_ip_count{{type="{}"}}'.format(vpn_service)] > 0 else 0
+        kb_metric['cycle_domain_churn_ratio{{type="{}"}}'.format(vpn_service)] = np.round(kb_metric['cycle_new_domain_count{{type="{}"}}'.format(vpn_service)] / kb_metric['active_domain_count{{type="{}"}}'.format(vpn_service)], 4) \
+            if kb_metric['active_domain_count{{type="{}"}}'.format(vpn_service)] > 0 else 0
         return kb_metric
 
 
@@ -171,6 +171,10 @@ if __name__ == '__main__':
         else:
             print('Please input correct recent interval')
             exit()
+
+        # 根据当前时间向前取整小时
+        end_time = datetime.datetime.now().strftime("%Y-%m-%d %H:00:00")
+        start_time = (datetime.datetime.now() - datetime.timedelta(hours=recent_interval)).strftime("%Y-%m-%d %H:00:00")
 
         monitor_result_dict.update(monitor.calculate_vpn_monitor_recent_mode(vpn_service=None))
         vpn_service_name_list = []

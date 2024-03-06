@@ -40,12 +40,16 @@ class Ipvanishvpn(VpnDetector):
         result_group = []
 
         # start finding ipvanishvpn server name
-        ipvanishvpn_detector = IpvanishvpnServername(self.start_time, self.end_time)
-        result_group.extend(ipvanishvpn_detector.find_server())
+        ipvanishvpn_server_name_detector = IpvanishvpnServername(self.start_time, self.end_time)
+        server_name_object = ipvanishvpn_server_name_detector.find_server()
+        result_group.extend(server_name_object)
 
         # start finding ipvanishvpn server ip
-        ipvanishvpn_detector = IpvanishvpnServerip()
-        result_group.extend(ipvanishvpn_detector.find_server())
+        ipvanishvpn_server_ip_detector = IpvanishvpnServerip()
+        # server_name_list 初始化本周期已查询到的
+        ipvanishvpn_server_ip_detector.server_name_list = server_name_object[0].server_list if len(
+            server_name_object) > 0 else []
+        result_group.extend(ipvanishvpn_server_ip_detector.find_server())
 
         return result_group
 
@@ -75,6 +79,8 @@ class IpvanishvpnServerip(VpnDetector):
         self.mariadb_dbname = self.config['mariadb']['db_name']
         self.mariadb_ip_tb_name = self.config['mariadb']['ip_table_name']
         self.mariadb_domain_tb_name = self.config['mariadb']['domain_table_name']
+
+        self.server_name_list = []
 
 
     def find_more_servernames(self, server_name_list):
@@ -116,11 +122,18 @@ class IpvanishvpnServerip(VpnDetector):
         if query_result:
             servername_list = [i[0] for i in query_result]
 
+        self.server_name_list.extend(servername_list)
+
         # 判断是否能够访问外网，如果能够访问外网，则从外网获取ipvanish_servername_list的域名解析地址
         if self.config['common']['active_scan']['switch'] and check_internet():
             servername_list = self.find_more_servernames(servername_list)
             if len(servername_list) > 0:
-                resolved_ip_list = self.resolve_dns_for_domain_list(servername_list)
+                resolved_ip_list = self.resolve_dns_for_domain_list(self.server_name_list,
+                                                                  max_workers=self.config['common']['active_scan'][
+                                                                      'max_workers'],
+                                                                  max_calls_per_second=
+                                                                  self.config['common']['active_scan'][
+                                                                      'max_calls_per_sec'])
                 self.logger.info(
                     '[{}] - Get {} server ip by resolving server name successfully.'.format(
                         self.plugin_name, len(resolved_ip_list)))

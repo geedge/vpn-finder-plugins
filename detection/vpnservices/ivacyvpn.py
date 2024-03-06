@@ -37,12 +37,15 @@ class Ivacyvpn(VpnDetector):
         result_group = []
 
         # start finding ivacyvpn server name
-        ivacyvpn_detector = IvacyvpnServername(self.start_time, self.end_time)
-        result_group.extend(ivacyvpn_detector.find_server())
+        ivacyvpn_server_name_detector = IvacyvpnServername(self.start_time, self.end_time)
+        server_name_object = ivacyvpn_server_name_detector.find_server()
+        result_group.extend(server_name_object)
 
         # start finding ivacyvpn server ip
-        ivacyvpn_detector = IvacyvpnServerip()
-        result_group.extend(ivacyvpn_detector.find_server())
+        ivacyvpn_server_ip_detector = IvacyvpnServerip()
+        # server_name_list 初始化本周期已查询到的
+        ivacyvpn_server_ip_detector.server_name_list = server_name_object[0].server_list if len(server_name_object) > 0 else []
+        result_group.extend(ivacyvpn_server_ip_detector.find_server())
 
         return result_group
 
@@ -74,6 +77,8 @@ class IvacyvpnServerip(VpnDetector):
         self.mariadb_ip_tb_name = self.config['mariadb']['ip_table_name']
         self.mariadb_domain_tb_name = self.config['mariadb']['domain_table_name']
 
+        self.server_name_list = []
+
 
 
 
@@ -84,7 +89,6 @@ class IvacyvpnServerip(VpnDetector):
         """
         self.kb_sql = self.kb_sql.replace("{$mariadb_dbname}", self.mariadb_dbname).replace("{$mariadb_domain_tablename}", self.mariadb_domain_tb_name)
 
-        server_name_list = []
         server_ip_list = []
 
         try:
@@ -94,14 +98,16 @@ class IvacyvpnServerip(VpnDetector):
 
         if query_result:
             for row in query_result:
-                server_name_list.append(row[0])
+                self.server_name_list.append(row[0])
 
-        # add dc-xxx.pointtoserver.com to server_name_list
-        server_name_list.extend([f"dc-{str(index)}.pointtoserver.com" for index in range(1000)])
-        server_name_list = list(set(server_name_list))
+        # add dc-xxx.pointtoserver.com to self.server_name_list
+        self.server_name_list.extend([f"dc-{str(index)}.pointtoserver.com" for index in range(1000)])
+        self.server_name_list = list(set(self.server_name_list))
 
         if self.config['common']['active_scan']['switch'] and check_internet():
-            server_ip_list = self.resolve_dns_for_domain_list(server_name_list)
+            server_ip_list = self.resolve_dns_for_domain_list(self.server_name_list,
+                                                              max_workers=self.config['common']['active_scan']['max_workers'],
+                                                              max_calls_per_second=self.config['common']['active_scan']['max_calls_per_sec'])
             if server_ip_list:
                 server_ip_list = list(set(server_ip_list))
                 self.logger.info(

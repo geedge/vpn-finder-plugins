@@ -39,12 +39,14 @@ class Cyberghostvpn(VpnDetector):
         result_group = []
 
         # start finding cyberghostvpn server name
-        cyberghostvpn_detector = CyberghostvpnServername(self.start_time, self.end_time)
-        result_group.extend(cyberghostvpn_detector.find_server())
+        cyberghostvpn_server_name_detector = CyberghostvpnServername(self.start_time, self.end_time)
+        server_name_object = cyberghostvpn_server_name_detector.find_server()
+        result_group.extend(server_name_object)
 
         # start finding cyberghostvpn server ip
-        cyberghostvpn_detector = CyberghostvpnServerip(self.start_time, self.end_time)
-        result_group.extend(cyberghostvpn_detector.find_server())
+        cyberghostvpn_server_ip_detector = CyberghostvpnServerip(self.start_time, self.end_time)
+        cyberghostvpn_server_ip_detector.server_name_list = server_name_object[0].server_list if len(server_name_object) > 0 else []
+        result_group.extend(cyberghostvpn_server_ip_detector.find_server())
 
         return result_group
 
@@ -80,6 +82,8 @@ class CyberghostvpnServerip(VpnDetector):
 
         self.sql = self.plugin_config['ip']['sql']
 
+        self.server_name_list = []
+
 
     def find_more_servernames(self, server_name_list):
         """
@@ -105,6 +109,21 @@ class CyberghostvpnServerip(VpnDetector):
         return expanded_server_names
 
 
+    def find_server_name_patterns(self, server_name_list):
+        pattern_list = []
+
+        for server_name in server_name_list:
+            # pattern = re.compile(r'\.(.*?)\-rack')
+            pattern = re.compile(r'\.(.*?)\.nodes')
+            findall = pattern.findall(server_name)
+            if len(findall) > 0:
+                pattern_list.append(findall[0])
+        pattern_list = set(pattern_list)
+
+        return pattern_list
+
+
+
     def find_server(self):
         """
         Get cyberghostvpn server ip by resolving cyberghostvpn server name
@@ -124,16 +143,31 @@ class CyberghostvpnServerip(VpnDetector):
 
         if query_result:
             servername_list = [i[0] for i in query_result]
+        self.server_name_list.extend(servername_list)
 
         # 判断是否能够访问外网，如果能够访问外网，则从外网获取cyberghost_servername_list的域名解析地址
         if self.config['common']['active_scan']['switch'] and check_internet():
-            servername_list = self.find_more_servernames(servername_list)
-            if len(servername_list) > 0:
-                resolved_ip_list = self.resolve_dns_for_domain_list(servername_list)
+            # servername_list = self.find_more_servernames(servername_list)
+            # if len(servername_list) > 0:
+            #     resolved_ip_list = self.resolve_dns_for_domain_list(servername_list)
+            #     self.logger.info('[{}] - Get {} server ip by resolving server name successfully.'.format(self.plugin_name, len(resolved_ip_list)))
+            # else:
+            #     self.logger.info(
+            #         '[{}] - No cyberghost server name found from knowledge database.'.format(self.plugin_name))
+
+            server_rackname_list = self.find_server_name_patterns(self.server_name_list)
+            if len(server_rackname_list) > 0:
+                resolved_ip_list = []
+                for rack_name in server_rackname_list:
+                    index = 1
+                    resolve_result = self.get_resolved_addr(f"blade{str(index)}.{rack_name}.nodes.gen4.ninja")
+                    while resolve_result[1] is not None:
+                        self.logger.info('{}  {}'.format(resolve_result[0], resolve_result[1]))
+                        resolved_ip_list.extend(resolve_result[1])
+                        index += 1
+                        resolve_result = self.get_resolved_addr(f"blade{str(index)}.{rack_name}.nodes.gen4.ninja")
                 self.logger.info('[{}] - Get {} server ip by resolving server name successfully.'.format(self.plugin_name, len(resolved_ip_list)))
-            else:
-                self.logger.info(
-                    '[{}] - No cyberghost server name found from knowledge database.'.format(self.plugin_name))
+
         else:
             self.logger.info('[{}] - No internet connection, skip dns resolve.'.format(self.plugin_name))
 

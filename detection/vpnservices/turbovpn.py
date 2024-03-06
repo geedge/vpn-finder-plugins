@@ -43,8 +43,8 @@ class Turbovpn(VpnDetector):
         self.sql = self.sql.replace("{$db_name}", self.dbname).replace("{$table_name}", self.table_name)
         self.sql = self.sql.replace("{$time_filter}", time_filter)
 
-        self.sql = self.sql.replace("{$security_table_name}", self.plugin_config['security_table_name'])\
-            .replace("{$security_policy_id}", str(self.plugin_config['security_policy_id']))
+        # self.sql = self.sql.replace("{$security_table_name}", self.plugin_config['security_table_name'])\
+        #     .replace("{$security_policy_id}", str(self.plugin_config['security_policy_id']))
 
         self.logger.info("[{}] - Sql for {}: {}".format(self.plugin_name, self.plugin_name, self.sql))
 
@@ -55,7 +55,9 @@ class Turbovpn(VpnDetector):
             self.client.disconnect()
 
         if turbovpn_serverip_df.empty:
-            self.logger.error('[{}] - No turbovpn server ip found from security event. Policy id: {}.'.format(self.plugin_name, self.plugin_config['security_policy_id']))
+            # self.logger.error('[{}] - No turbovpn server ip found from security event. Policy id: {}.'.format(self.plugin_name, self.plugin_config['security_policy_id']))
+            self.logger.error(
+                '[{}] - No turbovpn server ip found from session record'.format(self.plugin_name))
             return []
         turbovpn_serverip_list = turbovpn_serverip_df[0].drop_duplicates().tolist()
         self.logger.info('[{}] - Query turbovpn server ip from clickhouse database successfully. {} items found'

@@ -1,0 +1,14 @@
+addr_format,ip1,ip2,plugin_id,plugin_name,vpn_service_name,method,confidence,is_valid
+Single,176.125.228.147,176.125.228.147,5,cyberghostvpn,cyberghostvpn,passive_ml,confirmed,1
+Single,146.70.38.69,146.70.38.69,5,cyberghostvpn,cyberghostvpn,passive_ml,confirmed,1
+Single,146.70.38.65,146.70.38.65,5,cyberghostvpn,cyberghostvpn,passive_ml,confirmed,1
+Single,191.101.210.68,191.101.210.68,5,cyberghostvpn,cyberghostvpn,passive_ml,confirmed,1
+Single,191.101.210.26,191.101.210.26,5,cyberghostvpn,cyberghostvpn,passive_ml,confirmed,1
+Single,191.101.210.64,191.101.210.64,5,cyberghostvpn,cyberghostvpn,passive_ml,confirmed,1
+Single,146.70.39.10,146.70.39.10,5,cyberghostvpn,cyberghostvpn,passive_ml,confirmed,1
+Single,146.70.39.131,146.70.39.131,5,cyberghostvpn,cyberghostvpn,passive_ml,confirmed,1
+Single,146.70.39.19,146.70.39.19,5,cyberghostvpn,cyberghostvpn,passive_ml,confirmed,1
+Single,176.125.228.144,176.125.228.144,5,cyberghostvpn,cyberghostvpn,passive_ml,confirmed,1
+Single,146.70.39.145,146.70.39.145,5,cyberghostvpn,cyberghostvpn,passive_ml,confirmed,1
+Single,146.70.39.7,146.70.39.7,5,cyberghostvpn,cyberghostvpn,passive_ml,confirmed,1
+Single,146.70.39.141,146.70.39.141,5,cyberghostvpn,cyberghostvpn,passive_ml,confirmed,1
