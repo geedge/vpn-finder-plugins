@@ -167,13 +167,12 @@ class CyberghostvpnServerip(VpnDetector):
                         index += 1
                         resolve_result = self.get_resolved_addr(f"blade{str(index)}.{rack_name}.nodes.gen4.ninja")
                 self.logger.info('[{}] - Get {} server ip by resolving server name successfully.'.format(self.plugin_name, len(resolved_ip_list)))
-
         else:
             self.logger.info('[{}] - No internet connection, skip dns resolve.'.format(self.plugin_name))
 
 
         # 根据udp探测行为获取IP
-        self.logger.info('[{}] - Start to query server ip from session records.'.format(self.plugin_name))
+        self.logger.info('[{}] - Start to query server ip from session records according to udp payload feature.'.format(self.plugin_name))
 
         TIME_FILTER_PATTERN = self.config['common']['time_filter_pattern'].replace('recv_time_columnname',
                                                                                    self.config['common'][
@@ -194,13 +193,14 @@ class CyberghostvpnServerip(VpnDetector):
 
         if cyberghostvpn_serverip_df.empty:
             self.logger.info('[{}] - No server ip found from session records'.format(self.plugin_name))
-            return []
-        cyberghostvpn_serverip_list = cyberghostvpn_serverip_df[0].drop_duplicates().tolist()
-        self.logger.info('[{}] - Query server ip from clickhouse database successfully. {} items found'
-                         .format(self.plugin_name, len(cyberghostvpn_serverip_list)))
+        else:
+            cyberghostvpn_serverip_list = cyberghostvpn_serverip_df[0].drop_duplicates().tolist()
+            self.logger.info('[{}] - Query server ip from clickhouse database successfully. {} items found'
+                             .format(self.plugin_name, len(cyberghostvpn_serverip_list)))
+            resolved_ip_list.extend(cyberghostvpn_serverip_list)
 
 
-        result_ip_list = list(set(cyberghostvpn_serverip_list + resolved_ip_list))
+        result_ip_list = list(set(resolved_ip_list))
 
         return [ServerGroup(self.object_type, result_ip_list, self.output_file_name)]
 

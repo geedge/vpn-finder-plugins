@@ -132,7 +132,7 @@ class VpnDetector:
         except Exception as e:
             # self.logger.error("Resolve failed. {}: {} ".format(server_name, e))
             pass
-        self.logger.info('{}  {}'.format(server_name, resolved_addr))
+        # self.logger.info('{}  {}'.format(server_name, resolved_addr))
 
         return server_name, resolved_addr
 
