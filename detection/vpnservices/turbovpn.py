@@ -42,6 +42,7 @@ class Turbovpn(VpnDetector):
             self.end_time)).replace("{$time_zone}", self.time_zone)
         self.sql = self.sql.replace("{$db_name}", self.dbname).replace("{$table_name}", self.table_name)
         self.sql = self.sql.replace("{$time_filter}", time_filter)
+        self.sql = self.sql.replace("{$security_table_name}", self.config['clickhouse']['security_table_name'])
 
         # self.sql = self.sql.replace("{$security_table_name}", self.plugin_config['security_table_name'])\
         #     .replace("{$security_policy_id}", str(self.plugin_config['security_policy_id']))
