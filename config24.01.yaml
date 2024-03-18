@@ -129,7 +129,7 @@ turbovpn:
     plugin_name: turbovpn
     object_type: ip
     confidence: confirmed
-    sql: SELECT server_ip FROM {$db_name}.{$table_name} WHERE {$time_filter} AND server_port IN (66, 109, 8080, 97, 94, 92, 21, 25) GROUP BY server_ip having length(groupUniqArray(server_port))>3 UNION ALL SELECT server_ip FROM {$db_name}.{$security_table_name} WHERE {$time_filter} AND (app_transition LIKE '%Turbo_UDP%')
+    sql: SELECT server_ip FROM {$db_name}.{$table_name} WHERE {$time_filter} AND (app_transition LIKE '%Turbo_Payload%') UNION ALL select server_ip from {$db_name}.{$table_name}　WHERE {$time_filter} AND (server_port in (66, 109, 8080, 97, 94, 92, 21, 25, 110, 119, 2000, 2001))　 AND decoded_as='BASE' and  sent_bytes<1000 AND received_bytes<1000 and sent_pkts<10 and received_pkts<10　and server_asn in ('14061', '21859', '9009', '212238', '16276', '40021', '20473', '174', '138915', '12876') group by server_ip having count(*) >3
 
 
 geckovpn:
@@ -143,7 +143,7 @@ geckovpn:
 
 vpnunlimited:
     vpn_service_name: vpnunlimited
-    plugin_id: 11
+    plugin_id: 9
     plugin_name: vpnunlimited
     object_type: ip
     confidence: confirmed

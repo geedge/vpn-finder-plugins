@@ -1,0 +1,3 @@
+addr_format,ip1,ip2,plugin_id,plugin_name,vpn_service_name,method,confidence,is_valid
+Single,146.70.70.25,146.70.70.25,7,turbovpn,turbovpn,passive_ml,confirmed,1
+Single,128.1.205.228,128.1.205.228,7,turbovpn,turbovpn,passive_ml,confirmed,1
