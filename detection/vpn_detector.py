@@ -20,6 +20,8 @@ from clickhouse_driver import Client
 from tool.Config import Config
 from tool.KnowledgeBaseTool import KnowledgeApi
 import concurrent.futures
+from tool.Functions import is_valid_ip
+import awdb
 
 
 class ServerGroup:
@@ -155,6 +157,36 @@ class VpnDetector:
         return results
 
 
+    def filtered_by_isp(self, original_ip_list, delete_isp_list):
+        delete_ip_list = []
+        reader = awdb.open_database('detection/awdb/IP_city_single_WGS84.awdb')
+        for ip in original_ip_list:
+            try:
+                (record, prefix_len) = reader.get_with_prefix_len(ip)
+                isp = str(record.get('owner'), 'utf-8')
+                for isp_key_words in delete_isp_list:
+                    if isp_key_words in isp.strip('"').strip().lower():
+                        delete_ip_list.append(ip)
+            except ValueError:
+                continue
+
+        return self.filtered_by_ip(original_ip_list, delete_ip_list)
+
+
+    def filtered_by_ip(self, original_ip_list, delete_ip_list):
+        for ip in delete_ip_list:
+            if is_valid_ip(ip):
+                if ip in original_ip_list:
+                    original_ip_list.remove(ip)
+            elif ip.endswith('*'):
+                to_remove_ip = [i for i in original_ip_list if i.startswith(ip.strip('*'))]
+                if not len(to_remove_ip) == 0:
+                    [original_ip_list.remove(i) for i in to_remove_ip]
+            else:
+                self.logger.error("Wrong format in Protected IP List: {}    Support format like 8.8.8.8 or 8.8.*".format(ip))
+        return original_ip_list
+
+
 
 # 入口函数定义
 if __name__ == '__main__':
@@ -234,6 +266,10 @@ if __name__ == '__main__':
     result_group = detector.find_server()
     for server_group in result_group:
         result_list = server_group.server_list
+        if server_group.object_type == 'ip':
+            result_list = detector.filtered_by_isp(result_list, detector.config['common']['protected_isp_list'])
+            result_list = detector.filtered_by_ip(result_list, detector.config['common']['protected_ip_list'])
+            detector.logger.info('[{}] - Filtered by ISP and IP, {} {} left.'.format(detector.plugin_name, len(result_list), server_group.object_type))
         if len(result_list) > 0:
             detector.save_to_knowledgebase(result_list, server_group.object_type,
                                            detector.vpn_service_name, detector.plugin_id,

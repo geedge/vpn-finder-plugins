@@ -8,6 +8,8 @@ common:
         switch: on
         max_workers: 100
         max_calls_per_sec: 100
+    protected_isp_list: ["google", "谷歌", "cloudflare", "microsoft", "alibaba", "amazon", "facebook","微软", "腾讯"]       # isp关键词, 英文小写
+    protected_ip_list: ['8.8.8.8', '8.8.4.4', '1.1.1.1', '255.255.255.255', '0.0.0.0', '127.*']
 
 monitor:
 #    monitor_file_path: /Users/joy/Downloads/vpn_thwarting_monitor.prom
