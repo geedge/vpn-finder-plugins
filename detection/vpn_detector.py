@@ -20,7 +20,7 @@ from clickhouse_driver import Client
 from tool.Config import Config
 from tool.KnowledgeBaseTool import KnowledgeApi
 import concurrent.futures
-from tool.Functions import is_valid_ip
+from tool.Functions import is_valid_public_ip
 import awdb
 
 
@@ -175,7 +175,7 @@ class VpnDetector:
 
     def filtered_by_ip(self, original_ip_list, delete_ip_list):
         for ip in delete_ip_list:
-            if is_valid_ip(ip):
+            if is_valid_public_ip(ip):
                 if ip in original_ip_list:
                     original_ip_list.remove(ip)
             elif ip.endswith('*'):
