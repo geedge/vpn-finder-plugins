@@ -124,6 +124,7 @@ windscribevpn:
     ip:
         object_type: ip
         kb_sql: SELECT distinct domain FROM {$mariadb_dbname}.{$mariadb_domain_tablename} where vpn_service_name = 'windscribevpn'
+        sql: SELECT DISTINCT server_ip FROM {$db_name}.{$table_name} WHERE {$time_filter} and (ssl_cert_subject like '%Windscribe%' or ssl_cert_issuer like '%Windscribe%')
 
 turbovpn:
     vpn_service_name: turbovpn

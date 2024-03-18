@@ -20,7 +20,7 @@ from clickhouse_driver import Client
 from tool.Config import Config
 from tool.KnowledgeBaseTool import KnowledgeApi
 import concurrent.futures
-from tool.Functions import is_valid_public_ip
+from tool.Functions import is_valid_public_ip, is_valid_ip
 import awdb
 
 
@@ -36,6 +36,13 @@ class ServerGroup:
 
     def add_server(self, server):
         self.server_list.append(server)
+
+    # group 合并: 两个group object type相同时，合并server list
+    def merge(self, group):
+        if self.object_type == group.object_type:
+            self.server_list.extend(group.server_list)
+        else:
+            raise ValueError("Object type is not same, can't merge.")
 
 
 
@@ -175,7 +182,7 @@ class VpnDetector:
 
     def filtered_by_ip(self, original_ip_list, delete_ip_list):
         for ip in delete_ip_list:
-            if is_valid_public_ip(ip):
+            if is_valid_ip(ip):
                 if ip in original_ip_list:
                     original_ip_list.remove(ip)
             elif ip.endswith('*'):
@@ -184,6 +191,9 @@ class VpnDetector:
                     [original_ip_list.remove(i) for i in to_remove_ip]
             else:
                 self.logger.error("Wrong format in Protected IP List: {}    Support format like 8.8.8.8 or 8.8.*".format(ip))
+        # 删除original_ip_list中的局域网IP地址
+        original_ip_list = [i for i in original_ip_list if not i.startswith('192.168.') and not i.startswith('10.') and not i.startswith('172.') and not i.startswith('127.')]
+
         return original_ip_list
 
 
@@ -267,6 +277,8 @@ if __name__ == '__main__':
     for server_group in result_group:
         result_list = server_group.server_list
         if server_group.object_type == 'ip':
+            # 日志记录IP数量
+            detector.logger.info('[{}] - {} {} found.'.format(detector.plugin_name, len(result_list), server_group.object_type))
             result_list = detector.filtered_by_isp(result_list, detector.config['common']['protected_isp_list'])
             result_list = detector.filtered_by_ip(result_list, detector.config['common']['protected_ip_list'])
             detector.logger.info('[{}] - Filtered by ISP and IP, {} {} left.'.format(detector.plugin_name, len(result_list), server_group.object_type))
