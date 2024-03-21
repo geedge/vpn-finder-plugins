@@ -93,7 +93,7 @@ protonvpn:
     plugin_id: 4
     object_type: ip
     confidence: confirmed
-    sql: SELECT server_ip FROM {$db_name}.{$table_name} WHERE {$time_filter} AND (server_port IN (443, 7770, 8443, 88, 5060, 51820, 500, 80, 1224, 4500, 4569, 5060, 1194)) GROUP BY server_ip HAVING length(ports) > 10
+    sql: SELECT server_ip, groupUniqArray(port) as ports FROM {$db_name}.{$table_name} WHERE {$time_filter} AND (server_port IN (443, 7770, 8443, 88, 5060, 51820, 500, 80, 1224, 4500, 4569, 5060, 1194)) GROUP BY server_ip HAVING length(ports) > 10
 
 
 # tsg系统内置Cyberghost-UDP APP获取新增活跃IP

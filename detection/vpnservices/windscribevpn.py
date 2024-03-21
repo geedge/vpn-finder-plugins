@@ -52,7 +52,9 @@ class Windscribevpn(VpnDetector):
 
         # starting finding windscribevpn server ip from session records
         windscribevpn_server_ip_detector = WindscribevpnServerip(self.start_time, self.end_time)
-        result_group[1].merge(windscribevpn_server_ip_detector.find_server()[0])
+        server_ip_object = windscribevpn_server_ip_detector.find_server()
+        if len(server_ip_object[0].server_list)>0 > 0:
+            result_group[1].merge(server_ip_object[0])
 
         return result_group
 

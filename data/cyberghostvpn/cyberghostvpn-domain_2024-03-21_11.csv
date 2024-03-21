@@ -1,0 +1,5 @@
+domain,plugin_id,plugin_name,vpn_service_name,method,confidence,is_valid
+vientiane-rack401.nodes.gen4.ninja,5,cyberghostvpn,cyberghostvpn,passive_ml,confirmed,1
+blade01.vientiane-rack401.nodes.gen4.ninja,5,cyberghostvpn,cyberghostvpn,passive_ml,confirmed,1
+blade1.vientiane-rack401.nodes.gen4.ninja,5,cyberghostvpn,cyberghostvpn,passive_ml,confirmed,1
+blade2.vientiane-rack401.nodes.gen4.ninja,5,cyberghostvpn,cyberghostvpn,passive_ml,confirmed,1
