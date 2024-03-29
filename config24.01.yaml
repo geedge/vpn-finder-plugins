@@ -8,7 +8,7 @@ common:
         switch: on
         max_workers: 100
         max_calls_per_sec: 100
-    protected_isp_list: ["google", "谷歌", "cloudflare", "microsoft", "alibaba", "amazon", "facebook","微软", "腾讯"]       # isp关键词, 英文小写
+    protected_isp_list: ["google", "谷歌", "cloudflare", "microsoft", "alibaba", "amazon", "facebook","微软", "腾讯", "中国电信"]       # isp关键词, 英文小写
     protected_ip_list: ['8.8.8.8', '8.8.4.4', '1.1.1.1', '255.255.255.255', '0.0.0.0', '127.*']
 
 monitor:
@@ -28,16 +28,16 @@ clickhouse:
     security_table_name: security_event
 
 mariadb:
-    host: 192.168.44.53
+    host: 192.168.44.113
     port: 3306
     user: root
-    pswd: 111111
+    pswd: galaxy2019
     db_name: cn_api
     ip_table_name: cn_vpn_learning_ip
     domain_table_name: cn_vpn_learning_domain
 
 knowledgebase:
-    host: 192.168.44.54:8090
+    host: 192.168.44.53:8090
     kb_username: learning_engine
     api_pin: 111111
     api_path: /v1/knowledgeBase/items/batch
@@ -57,7 +57,7 @@ hotspotvpn:
     plugin_id: 1
     object_type: ip
     confidence: confirmed
-    sql: SELECT server_ip, any(server_asn) AS asn, count(*) AS session_num, groupUniqArray(server_domain) as domains, length(domains) as domain_count, countDistinct(client_ip) AS cip_num FROM {$db_name}.{$table_name} WHERE {$time_filter} AND (ssl_sni IN ({$domain_list})) GROUP BY server_ip having domain_count >= 3
+    sql: SELECT server_ip, any(server_asn) AS asn, count(*) AS session_num, groupUniqArray(server_domain) as domains, length(domains) as domain_count, countDistinct(client_ip) AS cip_num FROM {$db_name}.{$table_name} WHERE {$time_filter} AND (ssl_sni IN ({$domain_list})) GROUP BY server_ip having domain_count >= 5
     domains: paypal.com, facebook.com, twitter.com, whatsapp.com, get.adobe.com, cloudfront.net, mozilla.org
 
 
@@ -93,7 +93,7 @@ protonvpn:
     plugin_id: 4
     object_type: ip
     confidence: confirmed
-    sql: SELECT server_ip, groupUniqArray(port) as ports FROM {$db_name}.{$table_name} WHERE {$time_filter} AND (server_port IN (443, 7770, 8443, 88, 5060, 51820, 500, 80, 1224, 4500, 4569, 5060, 1194)) GROUP BY server_ip HAVING length(ports) > 10
+    sql: SELECT server_ip, groupUniqArray(server_port) as ports FROM {$db_name}.{$table_name} WHERE {$time_filter} AND (server_port IN (443, 7770, 8443, 88, 5060, 51820, 500, 80, 1224, 4500, 4569, 5060, 1194)) GROUP BY server_ip HAVING length(ports) >= 10
 
 
 # tsg系统内置Cyberghost-UDP APP获取新增活跃IP
@@ -132,7 +132,7 @@ turbovpn:
     plugin_name: turbovpn
     object_type: ip
     confidence: confirmed
-    sql: SELECT server_ip FROM {$db_name}.{$table_name} WHERE {$time_filter} AND (app_transition LIKE '%Turbo_Payload%') UNION ALL select server_ip from {$db_name}.{$table_name}　WHERE {$time_filter} AND (server_port in (66, 109, 8080, 97, 94, 92, 21, 25, 110, 119, 2000, 2001))　 AND decoded_as='BASE' and  sent_bytes<1000 AND received_bytes<1000 and sent_pkts<10 and received_pkts<10　and server_asn in ('14061', '21859', '9009', '212238', '16276', '40021', '20473', '174', '138915', '12876') group by server_ip having count(*) >3
+    sql: SELECT server_ip FROM {$db_name}.{$table_name} WHERE {$time_filter} AND (app_transition LIKE '%Turbo_Payload%') UNION ALL select server_ip from {$db_name}.{$table_name}　WHERE {$time_filter} AND (server_port in (66, 109, 8080, 97, 94, 92, 21, 25, 110, 119, 2000, 2001))　 AND decoded_as='BASE' and  sent_bytes<1000 AND received_bytes<1000 and sent_pkts<10 and received_pkts<10　and server_asn in ('14061', '21859', '9009', '212238', '16276', '40021', '20473', '174', '138915', '12876') group by server_ip having count(*) >10
 
 
 geckovpn:
@@ -151,6 +151,4 @@ vpnunlimited:
     object_type: ip
     confidence: confirmed
     sql: SELECT DISTINCT server_ip FROM {$db_name}.{$table_name} WHERE {$time_filter} AND server_domain in ({$domain_list})
-    domains: hurriwhilealivo.club, comcatches.live, cyphyl.com, chinacitybit.click, valarre.com, puppyfood.info, securestartup.business, beansandchips.com, zigzagwand.art, wifimeshnet.cc, atomicspike.art, fastwaterblog.com, aspheric-zombies.club, godzillo.link, cyberroast.shop, seligmania-online.com, easy-2fa.us, ikitoshi.cc, webcitynews.com, prebreeze.club, blackbettyclothing.com, cyberanalytics.link, musicinst.link, adsoasis.xyz, holidayphoto.xyz, graphlist.dev, nohumguitar.com, coffeedaybreak.com, thewalruss.net, learnjapanfilms.cc, ezhyperlix.xyz, statsnet.group, hockeybet.org, fastblazingpix.com, zapp-a-weasel.live
-
-
+    domains: hurriwhilealivo.club, comcatches.live, cyphyl.com, chinacitybit.click, valarre.com, puppyfood.info, securestartup.business, beansandchips.com, zigzagwand.art, wifimeshnet.cc, atomicspike.art, fastwaterblog.com, aspheric-zombies.club, godzillo.link, cyberroast.shop, seligmania-online.com, easy-2fa.us, ikitoshi.cc, webcitynews.com, prebreeze.club, blackbettyclothing.com, cyberanalytics.link, musicinst.link, adsoasis.xyz, holidayphoto.xyz, graphlist.dev, nohumguitar.com, coffeedaybreak.com, thewalruss.net, learnjapanfilms.cc, ezhyperlix.xyz, statsnet.group, hockeybet.org, fastblazingpix.com, zapp-a-weasel.live, puppyfood.info, fastdecidos.info, cyberroast.shop, picknife.org, nohumguitar.com, thewalruss.net, simplexsolutionsinc.com, prebreeze.club

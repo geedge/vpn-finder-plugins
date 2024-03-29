@@ -197,6 +197,9 @@ class VpnDetector:
         return original_ip_list
 
 
+    def filter_ipv6(self, original_ip_list):
+        return [i for i in original_ip_list if ':' not in i]
+
 
 # 入口函数定义
 if __name__ == '__main__':
@@ -276,11 +279,15 @@ if __name__ == '__main__':
     result_group = detector.find_server()
     for server_group in result_group:
         result_list = server_group.server_list
+        detector.logger.debug('[{}] - result list before filter: {}.'.format(detector.plugin_name, result_list))
         if server_group.object_type == 'ip':
             # 日志记录IP数量
             detector.logger.info('[{}] - {} {} found.'.format(detector.plugin_name, len(result_list), server_group.object_type))
             result_list = detector.filtered_by_isp(result_list, detector.config['common']['protected_isp_list'])
             result_list = detector.filtered_by_ip(result_list, detector.config['common']['protected_ip_list'])
+            result_list = detector.filter_ipv6(result_list)
+            detector.logger.debug(
+                '[{}] - filtered list {}.'.format(detector.plugin_name, [i for i in server_group.server_list if i not in result_list]))
             detector.logger.info('[{}] - Filtered by ISP and IP, {} {} left.'.format(detector.plugin_name, len(result_list), server_group.object_type))
         if len(result_list) > 0:
             detector.save_to_knowledgebase(result_list, server_group.object_type,
