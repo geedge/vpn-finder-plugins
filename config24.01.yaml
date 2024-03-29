@@ -12,8 +12,8 @@ common:
     protected_ip_list: ['8.8.8.8', '8.8.4.4', '1.1.1.1', '255.255.255.255', '0.0.0.0', '127.*']
 
 monitor:
-#    monitor_file_path: /Users/joy/Downloads/vpn_thwarting_monitor.prom
-    monitor_file_path: /opt/vpn-finder-plugins/prom/vpn_plugin_knowledgebase_monitor.prom
+    monitor_file_path: /Users/joy/Downloads/vpn_thwarting_monitor.prom
+#    monitor_file_path: /opt/vpn-finder-plugins/prom/vpn_plugin_knowledgebase_monitor.prom
     outdated_days: 100 # outdated after Inactive for days. outdated results will not be monitored as effective results
     timezone_hour_gap: 8
 
@@ -152,3 +152,9 @@ vpnunlimited:
     confidence: confirmed
     sql: SELECT DISTINCT server_ip FROM {$db_name}.{$table_name} WHERE {$time_filter} AND server_domain in ({$domain_list})
     domains: hurriwhilealivo.club, comcatches.live, cyphyl.com, chinacitybit.click, valarre.com, puppyfood.info, securestartup.business, beansandchips.com, zigzagwand.art, wifimeshnet.cc, atomicspike.art, fastwaterblog.com, aspheric-zombies.club, godzillo.link, cyberroast.shop, seligmania-online.com, easy-2fa.us, ikitoshi.cc, webcitynews.com, prebreeze.club, blackbettyclothing.com, cyberanalytics.link, musicinst.link, adsoasis.xyz, holidayphoto.xyz, graphlist.dev, nohumguitar.com, coffeedaybreak.com, thewalruss.net, learnjapanfilms.cc, ezhyperlix.xyz, statsnet.group, hockeybet.org, fastblazingpix.com, zapp-a-weasel.live, puppyfood.info, fastdecidos.info, cyberroast.shop, picknife.org, nohumguitar.com, thewalruss.net, simplexsolutionsinc.com, prebreeze.club
+
+
+psiphon3vpn:
+    vpn_service_name: psiphon3vpn
+    plugin_id: 10
+    plugin_name: psiphon3vpn
