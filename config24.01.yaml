@@ -5,7 +5,7 @@ common:
     time_filter_pattern: (recv_time_columnname> toDateTime('{$start_time}', '{$time_zone}')) AND(recv_time_columnname <= toDateTime('{$end_time}', '{$time_zone}'))
     save_knowledgebase: True
     active_scan:  # max calls/s (rough estimate) = max workers * max_call_per_sec
-        switch: on
+        switch: off
         max_workers: 100
         max_calls_per_sec: 100
     protected_isp_list: ["google", "谷歌", "cloudflare", "microsoft", "alibaba", "amazon", "facebook","微软", "腾讯", "中国电信"]       # isp关键词, 英文小写
@@ -108,6 +108,7 @@ cyberghostvpn:
     ip:
         object_type: ip
         kb_sql: SELECT distinct domain FROM {$mariadb_dbname}.{$mariadb_domain_tablename} where vpn_service_name = 'cyberghostvpn'
+        monitor_on: False
         udp_monitor_app_name: Cyberghost-UDP
         sql: SELECT DISTINCT server_ip FROM {$db_name}.{$table_name} WHERE {$time_filter} and app_transition like '%{$udp_monitor_app_name}%'
 

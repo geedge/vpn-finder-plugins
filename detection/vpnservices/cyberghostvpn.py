@@ -172,32 +172,34 @@ class CyberghostvpnServerip(VpnDetector):
 
 
         # 根据udp探测行为获取IP
-        self.logger.info('[{}] - Start to query server ip from session records according to udp payload feature.'.format(self.plugin_name))
+        if self.plugin_config['ip']['monitor_on']:
 
-        TIME_FILTER_PATTERN = self.config['common']['time_filter_pattern'].replace('recv_time_columnname',
-                                                                                   self.config['common'][
-                                                                                       'recv_time_columnname'])
-        time_filter = TIME_FILTER_PATTERN.replace("{$start_time}", str(self.start_time)).replace("{$end_time}", str(
-            self.end_time)).replace("{$time_zone}", self.time_zone)
-        self.sql = self.sql.replace("{$db_name}", self.dbname).replace("{$table_name}", self.table_name)
-        self.sql = self.sql.replace("{$time_filter}", time_filter)
-        self.sql = self.sql.replace("{$udp_monitor_app_name}", self.plugin_config['ip']['udp_monitor_app_name'])
+            self.logger.info('[{}] - Start to query server ip from session records according to udp payload feature.'.format(self.plugin_name))
 
-        self.logger.info("[{}] - Sql for {}: {}".format(self.plugin_name, self.plugin_name, self.sql))
+            TIME_FILTER_PATTERN = self.config['common']['time_filter_pattern'].replace('recv_time_columnname',
+                                                                                       self.config['common'][
+                                                                                           'recv_time_columnname'])
+            time_filter = TIME_FILTER_PATTERN.replace("{$start_time}", str(self.start_time)).replace("{$end_time}", str(
+                self.end_time)).replace("{$time_zone}", self.time_zone)
+            self.sql = self.sql.replace("{$db_name}", self.dbname).replace("{$table_name}", self.table_name)
+            self.sql = self.sql.replace("{$time_filter}", time_filter)
+            self.sql = self.sql.replace("{$udp_monitor_app_name}", self.plugin_config['ip']['udp_monitor_app_name'])
 
-        # query data from clickhouse database
-        try:
-            cyberghostvpn_serverip_df = pd.DataFrame(self.client.execute(self.sql))
-        finally:
-            self.client.disconnect()
+            self.logger.info("[{}] - Sql for {}: {}".format(self.plugin_name, self.plugin_name, self.sql))
 
-        if cyberghostvpn_serverip_df.empty:
-            self.logger.info('[{}] - No server ip found from session records'.format(self.plugin_name))
-        else:
-            cyberghostvpn_serverip_list = cyberghostvpn_serverip_df[0].drop_duplicates().tolist()
-            self.logger.info('[{}] - Query server ip from clickhouse database successfully. {} items found'
-                             .format(self.plugin_name, len(cyberghostvpn_serverip_list)))
-            resolved_ip_list.extend(cyberghostvpn_serverip_list)
+            # query data from clickhouse database
+            try:
+                cyberghostvpn_serverip_df = pd.DataFrame(self.client.execute(self.sql))
+            finally:
+                self.client.disconnect()
+
+            if cyberghostvpn_serverip_df.empty:
+                self.logger.info('[{}] - No server ip found from session records'.format(self.plugin_name))
+            else:
+                cyberghostvpn_serverip_list = cyberghostvpn_serverip_df[0].drop_duplicates().tolist()
+                self.logger.info('[{}] - Query server ip from clickhouse database successfully. {} items found'
+                                 .format(self.plugin_name, len(cyberghostvpn_serverip_list)))
+                resolved_ip_list.extend(cyberghostvpn_serverip_list)
 
 
         result_ip_list = list(set(resolved_ip_list))
