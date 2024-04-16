@@ -14,6 +14,7 @@ import sys
 sys.path.append('..')
 
 from tool.LoggingTool import Logger
+from urllib.parse import quote
 
 logger = Logger().getLogger()
 simplefilter(action='ignore', category=FutureWarning)
@@ -27,7 +28,7 @@ class KnowledgeApi:
         self.api_path = config['api_path']
         self.retry_max = config['api_retry_times']
         self.request_timeout = config['api_timeout']
-        # self.api_token = self.get_api_token()
+
         self.api_token = config['api_token']
 
     def get_api_token(self):
@@ -59,13 +60,12 @@ class KnowledgeApi:
             sys.exit()
 
 
-    def file_import(self, file_path, knowledge_id, action, description=''):
+    def file_import(self, file_path, action, description=''):
         url = 'http://' + self.api_address + self.api_path
         file = open(file_path, "rb")
         file_object = {"file": file}
 
         param = {
-            "knowledgeId": knowledge_id,
             "action": action,
             "description": description
         }
@@ -103,7 +103,7 @@ class KnowledgeApi:
     def get_knowledgebase_count(self, knowledge_id, page_size=None, page_no=None, q=None):
         url = 'http://' + self.api_address + '/v1/knowledgeBase/' + str(knowledge_id)
         param = {
-            "q": q,
+            "q": quote(q, 'utf-8'),
             "pageNo": page_no,
             "pageSize": page_size
 

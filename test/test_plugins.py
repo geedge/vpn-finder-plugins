@@ -46,13 +46,13 @@ class TestIpvanishvpnServername(unittest.TestCase):
             print(result.server_list)
 
     def test_save_to_knowledgebase(self):
-        self.ipvanishvpn_detector.save_to_knowledgebase(object_type='domain',
-                                                       object_list=self.ipvanishvpn_detector.find_server(),
-                                                       vpn_service_name=self.ipvanishvpn_detector.vpn_service_name,
-                                                       plugin_id=self.ipvanishvpn_detector.plugin_id,
-                                                       plugin_name=self.ipvanishvpn_detector.plugin_name,
-                                                       output_filename=self.ipvanishvpn_detector.output_file_name,
-                                                       confidence=self.ipvanishvpn_detector.confidence)
+        self.ipvanishvpn_detector.save_results(object_type='domain',
+                                               object_list=self.ipvanishvpn_detector.find_server(),
+                                               vpn_service_name=self.ipvanishvpn_detector.vpn_service_name,
+                                               plugin_id=self.ipvanishvpn_detector.plugin_id,
+                                               plugin_name=self.ipvanishvpn_detector.plugin_name,
+                                               output_filename=self.ipvanishvpn_detector.output_file_name,
+                                               confidence=self.ipvanishvpn_detector.confidence)
 
 
 class TestIpvanishvpnServerip(unittest.TestCase):

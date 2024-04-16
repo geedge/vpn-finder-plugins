@@ -19,9 +19,9 @@ class KnowledgeBaseMonitor:
         self.knowledgebase_config = Config().config['knowledgebase']
         self.knowledgebase_tool = KnowledgeApi(self.knowledgebase_config)
 
-    def get_vpn_count(self, vpn_service=None, start_t=None, end_t=None, node_type='ip', mode='active', timezone_gap_hour=0):
+    def get_vpn_count(self, plugin_name=None, start_t=None, end_t=None, node_type='ip', mode='active', timezone_gap_hour=0):
         """
-        :param vpn_service: filter by vpn_service
+        :param plugin_name: filter by vpn_service
         :param node_type: 'ip' or 'domain'
         :param mode: 'active' or 'new'
         :param start_t: time range, format as '2024-01-20 15:00:00'
@@ -30,11 +30,11 @@ class KnowledgeBaseMonitor:
         """
         q = ""
 
-        # query node type
+        library_id = self.knowledgebase_tool.get_library_id(self.knowledgebase_config['library_name'])
         if node_type == 'ip':
-            library_id = self.knowledgebase_tool.get_library_id(self.knowledgebase_config['ip_library_name'])
+            q += "type = 'IP'"
         elif node_type == 'domain':
-            library_id = self.knowledgebase_tool.get_library_id(self.knowledgebase_config['domain_library_name'])
+            q += "type = 'Domain'"
         else:
             raise ValueError(
                 "Wrong parameter \"node_type\" provided for KnowledgeBaseMonitor.get_vpn_ip_count: {}".format(
@@ -42,16 +42,16 @@ class KnowledgeBaseMonitor:
 
         # query active node or new node
         if mode == 'active':
-            time_column = 'op_time'
+            time_column = 'updated_time'
         elif mode == 'new':
-            time_column = 'c_time'
+            time_column = 'created_time'
         else:
             raise ValueError(
                 "Wrong parameter \"\mode\" provided for KnowledgeBaseMonitor. get_vpn_ip_count: {}".format(mode))
 
         # query specific vpn service
-        if vpn_service and vpn_service!='all':
-            q += " and vpn_service_name = '{}'".format(vpn_service)
+        if plugin_name and plugin_name != 'all':
+            q += " and source_name = '{}'".format(plugin_name)
 
         # query specific time range
         if start_t:
@@ -77,13 +77,13 @@ class KnowledgeBaseMonitor:
 
         # cycle active
         kb_metric['active_ip_count{{type="{}"}}'.format(vpn_service)] = self.get_vpn_count(node_type='ip', mode='active', timezone_gap_hour=time_zone_gap,
-                                                                start_t=start_time, end_t=end_time, vpn_service=vpn_service)
+                                                                                           start_t=start_time, end_t=end_time, plugin_name=vpn_service)
         kb_metric['new_ip_count{{type="{}"}}'.format(vpn_service)] = self.get_vpn_count(node_type='ip', mode='new', timezone_gap_hour=time_zone_gap,
-                                                                              start_t=start_time, end_t=end_time, vpn_service=vpn_service)
+                                                                                        start_t=start_time, end_t=end_time, plugin_name=vpn_service)
         kb_metric['active_domain_count{{type="{}"}}'.format(vpn_service)] = self.get_vpn_count(node_type='domain', mode='active', timezone_gap_hour=time_zone_gap,
-                                                                start_t=start_time, end_t=end_time, vpn_service=vpn_service)
+                                                                                               start_t=start_time, end_t=end_time, plugin_name=vpn_service)
         kb_metric['new_domain_count{{type="{}"}}'.format(vpn_service)] = self.get_vpn_count(node_type='domain', mode='new', timezone_gap_hour=time_zone_gap,
-                                                             start_t=start_time, end_t=end_time, vpn_service=vpn_service)
+                                                                                            start_t=start_time, end_t=end_time, plugin_name=vpn_service)
 
 
         for key in monitor_result_dict.keys():
@@ -109,25 +109,25 @@ class KnowledgeBaseMonitor:
         if vpn_service is None: vpn_service = 'all'
 
         # all
-        kb_metric['ip_count{{type="{}"}}'.format(vpn_service)] = self.get_vpn_count(node_type='ip', timezone_gap_hour=time_zone_gap, vpn_service=vpn_service)
-        kb_metric['domain_count{{type="{}"}}'.format(vpn_service)] = self.get_vpn_count(node_type='domain', timezone_gap_hour=time_zone_gap, vpn_service=vpn_service)
+        kb_metric['ip_count{{type="{}"}}'.format(vpn_service)] = self.get_vpn_count(node_type='ip', timezone_gap_hour=time_zone_gap, plugin_name=vpn_service)
+        kb_metric['domain_count{{type="{}"}}'.format(vpn_service)] = self.get_vpn_count(node_type='domain', timezone_gap_hour=time_zone_gap, plugin_name=vpn_service)
 
         # all active in like 7 days
         t = (datetime.datetime.now().replace(minute=0, second=0, microsecond=0)
              - datetime.timedelta(days=self.monitor_config['outdated_days'])).strftime("%Y-%m-%d %H:%M:%S")
-        kb_metric['active_ip_count{{type="{}"}}'.format(vpn_service)] = self.get_vpn_count(node_type='ip', mode='active', timezone_gap_hour=time_zone_gap, start_t=t, vpn_service=vpn_service)
-        kb_metric['active_domain_count{{type="{}"}}'.format(vpn_service)] = self.get_vpn_count(node_type='domain', mode='active', timezone_gap_hour=time_zone_gap, start_t=t, vpn_service=vpn_service)
+        kb_metric['active_ip_count{{type="{}"}}'.format(vpn_service)] = self.get_vpn_count(node_type='ip', mode='active', timezone_gap_hour=time_zone_gap, start_t=t, plugin_name=vpn_service)
+        kb_metric['active_domain_count{{type="{}"}}'.format(vpn_service)] = self.get_vpn_count(node_type='domain', mode='active', timezone_gap_hour=time_zone_gap, start_t=t, plugin_name=vpn_service)
 
 
         # cycle active
         kb_metric['cycle_active_ip_count{{type="{}"}}'.format(vpn_service)] = self.get_vpn_count(node_type='ip', mode='active', timezone_gap_hour=time_zone_gap,
-                                                                start_t=current_start_time, end_t=current_end_time, vpn_service=vpn_service)
+                                                                                                 start_t=current_start_time, end_t=current_end_time, plugin_name=vpn_service)
         kb_metric['cycle_new_ip_count{{type="{}"}}'.format(vpn_service)] = self.get_vpn_count(node_type='ip', mode='new', timezone_gap_hour=time_zone_gap,
-                                                                start_t=current_start_time, end_t=current_end_time, vpn_service=vpn_service)
+                                                                                              start_t=current_start_time, end_t=current_end_time, plugin_name=vpn_service)
         kb_metric['cycle_active_domain_count{{type="{}"}}'.format(vpn_service)] = self.get_vpn_count(node_type='domain', mode='active', timezone_gap_hour=time_zone_gap,
-                                                                start_t=current_start_time, end_t=current_end_time, vpn_service=vpn_service)
+                                                                                                     start_t=current_start_time, end_t=current_end_time, plugin_name=vpn_service)
         kb_metric['cycle_new_domain_count{{type="{}"}}'.format(vpn_service)] = self.get_vpn_count(node_type='domain', mode='new', timezone_gap_hour=time_zone_gap,
-                                                             start_t=current_start_time, end_t=current_end_time, vpn_service=vpn_service)
+                                                                                                  start_t=current_start_time, end_t=current_end_time, plugin_name=vpn_service)
 
 
         # churn ratio = (# new in current cycle)/(# all active)
@@ -190,7 +190,7 @@ if __name__ == '__main__':
         for item in monitor_result_dict.items():
             with open(monitor_file, "a") as file:
                 file.write(item[0] + ' ' + str(item[1]) + '\n')
-                logger.info("[Monitor] {}~{} -{} {}".format(start_time, end_time, item[0], str(item[1])))
+                logger.info("[Monitor] {}~{} - {} {}".format(start_time, end_time, item[0], str(item[1])))
 
 
     # offline onetime mode

@@ -5,7 +5,7 @@ common:
     time_filter_pattern: (recv_time_columnname> toDateTime('{$start_time}', '{$time_zone}')) AND(recv_time_columnname <= toDateTime('{$end_time}', '{$time_zone}'))
     save_knowledgebase: True
     active_scan:  # max calls/s (rough estimate) = max workers * max_call_per_sec
-        switch: off
+        switch: on
         max_workers: 100
         max_calls_per_sec: 100
     protected_isp_list: ["google", "谷歌", "cloudflare", "microsoft", "alibaba", "amazon", "facebook","微软", "腾讯", "中国电信"]       # isp关键词, 英文小写
@@ -28,25 +28,24 @@ clickhouse:
     security_table_name: security_event
 
 mariadb:
-    host: 192.168.44.113
+    host: 192.168.44.53
     port: 3306
     user: root
-    pswd: galaxy2019
+    pswd: 111111
     db_name: cn_api
-    ip_table_name: cn_vpn_learning_ip
-    domain_table_name: cn_vpn_learning_domain
+    table_name: cn_intelligence_indicator
+
 
 knowledgebase:
-    host: 192.168.44.53:8090
-    kb_username: learning_engine
-    api_pin: 111111
-    api_path: /v1/knowledgeBase/items/batch
+    host: 192.168.44.54:8090
+    kb_username:
+    api_pin:
+    api_path: /v1/tag/items/batch
     api_token: a2857bc21b01421b85953fc2c65b4d4c
     api_retry_times: 3
     api_timeout: 9999
     db_name: cn_api
-    ip_library_name: vpn_learning_ip
-    domain_library_name: vpn_learning_domain
+    library_name: cn_intelligence_indicator
 
 
 ### PLUGIN CONFIGS
@@ -54,43 +53,43 @@ knowledgebase:
 hotspotvpn:
     plugin_name: hotspotvpn
     vpn_service_name: hotspotvpn
-    plugin_id: 1
+    plugin_id: fd3a275b-49e0-462e-8630-c0f4698da9a8
     object_type: ip
     confidence: confirmed
-    sql: SELECT server_ip, any(server_asn) AS asn, count(*) AS session_num, groupUniqArray(server_domain) as domains, length(domains) as domain_count, countDistinct(client_ip) AS cip_num FROM {$db_name}.{$table_name} WHERE {$time_filter} AND (ssl_sni IN ({$domain_list})) GROUP BY server_ip having domain_count >= 5
+    sql: SELECT server_ip FROM {$db_name}.{$table_name} WHERE {$time_filter} AND (ssl_ja3_hash in ('f49621211538d12435b8498f195d0c31', '908e8001ed339d74cedd91a4eb7abfab')) UNION ALL SELECT server_ip  FROM {$db_name}.{$table_name} WHERE {$time_filter} AND (ssl_sni IN ({$domain_list})) GROUP BY server_ip having length(groupUniqArray(server_domain)) >= 5
     domains: paypal.com, facebook.com, twitter.com, whatsapp.com, get.adobe.com, cloudfront.net, mozilla.org
 
 
 ipvanishvpn:
     plugin_name: ipvanishvpn
     vpn_service_name: ipvanishvpn
-    plugin_id: 2
+    plugin_id: c7ef715a-4ee0-4ac7-b30e-49f337fc8fb8
     confidence: confirmed
     domain:
         object_type: domain
         sql: SELECT DISTINCT dns_qname FROM {$db_name}.{$table_name} WHERE {$time_filter} AND dns_qname LIKE '%.vpn.ipvanish.com'
     ip:
         object_type: ip
-        kb_sql: SELECT distinct domain FROM {$mariadb_dbname}.{$mariadb_domain_tablename} where vpn_service_name = 'ipvanishvpn'
+        kb_sql: SELECT distinct domain FROM {$mariadb_dbname}.{$mariadb_tablename} where source_name = 'ipvanishvpn' and type='Domain'
 
 
 ivacyvpn:
     plugin_name: ivacyvpn
     vpn_service_name: ivacyvpn
-    plugin_id: 3
+    plugin_id: fdb15703-fb5c-4600-8f04-6128adb1940b
     confidence: confirmed
     domain:
         object_type: domain
         sql: SELECT DISTINCT dns_qname FROM {$db_name}.{$table_name} WHERE {$time_filter} AND ((dns_qname LIKE '%.pointtoserver.com') or (dns_qname LIKE '%.ptoserver.com') or (dns_qname LIKE '%.dns2use.com'))
     ip:
         object_type: ip
-        kb_sql: SELECT distinct domain FROM {$mariadb_dbname}.{$mariadb_domain_tablename} where vpn_service_name = 'ivacyvpn'
+        kb_sql: SELECT distinct domain FROM {$mariadb_dbname}.{$mariadb_tablename} where source_name = 'ivacyvpn' and type='Domain'
 
 
 protonvpn:
     plugin_name: protonvpn
     vpn_service_name: protonvpn
-    plugin_id: 4
+    plugin_id: 9315f6f7-c921-4bb2-a16f-3da86ad3baee
     object_type: ip
     confidence: confirmed
     sql: SELECT server_ip, groupUniqArray(server_port) as ports FROM {$db_name}.{$table_name} WHERE {$time_filter} AND (server_port IN (443, 7770, 8443, 88, 5060, 51820, 500, 80, 1224, 4500, 4569, 5060, 1194)) GROUP BY server_ip HAVING length(ports) >= 10
@@ -100,14 +99,14 @@ protonvpn:
 cyberghostvpn:
     plugin_name: cyberghostvpn
     vpn_service_name: cyberghostvpn
-    plugin_id: 5
+    plugin_id: d3e486c4-4d4d-429e-9af8-d018f73dde99
     confidence: confirmed
     domain:
         object_type: domain
         sql: SELECT DISTINCT dns_qname FROM {$db_name}.{$table_name} WHERE {$time_filter} AND dns_qname LIKE '%.nodes.gen4.ninja'
     ip:
         object_type: ip
-        kb_sql: SELECT distinct domain FROM {$mariadb_dbname}.{$mariadb_domain_tablename} where vpn_service_name = 'cyberghostvpn'
+        kb_sql: SELECT distinct domain FROM {$mariadb_dbname}.{$mariadb_tablename} where source_name = 'cyberghostvpn' and type='Domain'
         monitor_on: False
         udp_monitor_app_name: Cyberghost-UDP
         sql: SELECT DISTINCT server_ip FROM {$db_name}.{$table_name} WHERE {$time_filter} and app_transition like '%{$udp_monitor_app_name}%'
@@ -116,7 +115,7 @@ cyberghostvpn:
 windscribevpn:
     plugin_name: windscribevpn
     vpn_service_name: windscribevpn
-    plugin_id: 6
+    plugin_id: 9bd2b634-be41-453f-b6eb-89e25bbffcc3
     confidence: confirmed
     domain:
         object_type: domain
@@ -124,12 +123,12 @@ windscribevpn:
         domains: whiskergalaxy.com, totallyacdn.com
     ip:
         object_type: ip
-        kb_sql: SELECT distinct domain FROM {$mariadb_dbname}.{$mariadb_domain_tablename} where vpn_service_name = 'windscribevpn'
+        kb_sql: SELECT distinct domain FROM {$mariadb_dbname}.{$mariadb_tablename} where source_name = 'windscribevpn' and type='Domain'
         sql: SELECT DISTINCT server_ip FROM {$db_name}.{$table_name} WHERE {$time_filter} and (ssl_cert_subject like '%Windscribe%' or ssl_cert_issuer like '%Windscribe%')
 
 turbovpn:
     vpn_service_name: turbovpn
-    plugin_id: 7
+    plugin_id: 77fdc9b2-83b5-451f-a85d-98798810a7ec
     plugin_name: turbovpn
     object_type: ip
     confidence: confirmed
@@ -138,7 +137,7 @@ turbovpn:
 
 geckovpn:
     vpn_service_name: geckovpn
-    plugin_id: 8
+    plugin_id: ffbda1c9-dbbe-4160-8961-270d3aeb6a37
     plugin_name: geckovpn
     object_type: ip
     confidence: confirmed
@@ -147,7 +146,7 @@ geckovpn:
 
 vpnunlimited:
     vpn_service_name: vpnunlimited
-    plugin_id: 9
+    plugin_id: a0693f60-9028-4680-bbce-4200cfcbd291
     plugin_name: vpnunlimited
     object_type: ip
     confidence: confirmed
@@ -157,5 +156,5 @@ vpnunlimited:
 
 psiphon3vpn:
     vpn_service_name: psiphon3vpn
-    plugin_id: 10
+    plugin_id: 5d225aa8-ae80-4c89-a972-026bbb5d14e4
     plugin_name: psiphon3vpn
