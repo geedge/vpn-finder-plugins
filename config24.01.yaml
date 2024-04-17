@@ -56,7 +56,7 @@ hotspotvpn:
     plugin_id: 1
     object_type: ip
     confidence: confirmed
-    sql: SELECT server_ip, any(server_asn) AS asn, count(*) AS session_num, groupUniqArray(server_domain) as domains, length(domains) as domain_count, countDistinct(client_ip) AS cip_num FROM {$db_name}.{$table_name} WHERE {$time_filter} AND (ssl_sni IN ({$domain_list})) GROUP BY server_ip having domain_count >= 5
+    sql: SELECT server_ip FROM {$db_name}.{$table_name} WHERE {$time_filter} AND (ssl_ja3_hash in ('f49621211538d12435b8498f195d0c31', '908e8001ed339d74cedd91a4eb7abfab')) UNION ALL SELECT server_ip  FROM {$db_name}.{$table_name} WHERE {$time_filter} AND (ssl_sni IN ({$domain_list})) GROUP BY server_ip having length(groupUniqArray(server_domain)) >= 5
     domains: paypal.com, facebook.com, twitter.com, whatsapp.com, get.adobe.com, cloudfront.net, mozilla.org
 
 
