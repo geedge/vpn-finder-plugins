@@ -102,12 +102,14 @@ class KnowledgeApi:
 
     def get_knowledgebase_count(self, knowledge_id, page_size=None, page_no=None, q=None):
         url = 'http://' + self.api_address + '/v1/knowledgeBase/' + str(knowledge_id)
+        q = quote(q, 'utf-8')
         param = {
-            "q": quote(q, 'utf-8'),
             "pageNo": page_no,
             "pageSize": page_size
 
         }
+        url += ('?q=' + q)
+
         header = {
             "Cn-Authorization": self.api_token
         }

@@ -176,12 +176,12 @@ if __name__ == '__main__':
         end_time = datetime.datetime.now().strftime("%Y-%m-%d %H:00:00")
         start_time = (datetime.datetime.now() - datetime.timedelta(hours=recent_interval)).strftime("%Y-%m-%d %H:00:00")
 
-        monitor_result_dict.update(monitor.calculate_vpn_monitor_recent_mode(vpn_service=None))
+        monitor_result_dict.update(monitor.calculate_vpn_monitor_recent_mode(vpn_service=None, recent_interval_h=recent_interval))
         vpn_service_name_list = []
         for plugin_name in config_dict:
             if 'vpn' in plugin_name and 'vpn_service_name' in config_dict[plugin_name]:
                 vpn_service_name = config_dict[plugin_name]['vpn_service_name']
-                monitor_result_dict.update(monitor.calculate_vpn_monitor_recent_mode(vpn_service=vpn_service_name))
+                monitor_result_dict.update(monitor.calculate_vpn_monitor_recent_mode(vpn_service=vpn_service_name, recent_interval_h=recent_interval))
 
         # save to prom file
         monitor_file = monitor.monitor_config['monitor_file_path']
