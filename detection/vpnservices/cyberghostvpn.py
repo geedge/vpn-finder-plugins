@@ -140,7 +140,7 @@ class CyberghostvpnServerip(VpnDetector):
             self.mariadb.close()
 
         if query_result:
-            servername_list = [i[0] for i in query_result]
+            servername_list = [i[0].strip('$') for i in query_result]
         self.server_name_list.extend(servername_list)
 
         # 判断是否能够访问外网，如果能够访问外网，则从外网获取cyberghost_servername_list的域名解析地址

@@ -12,8 +12,8 @@ common:
     protected_ip_list: ['8.8.8.8', '8.8.4.4', '1.1.1.1', '255.255.255.255', '0.0.0.0', '127.*']
 
 monitor:
-    monitor_file_path: /Users/joy/Downloads/vpn_thwarting_monitor.prom
-#    monitor_file_path: /opt/vpn-finder-plugins/prom/vpn_plugin_knowledgebase_monitor.prom
+#    monitor_file_path: /Users/joy/Downloads/vpn_thwarting_monitor.prom
+    monitor_file_path: /opt/vpn-finder-plugins/prom/vpn_plugin_knowledgebase_monitor.prom
     outdated_days: 100 # outdated after Inactive for days. outdated results will not be monitored as effective results
     timezone_hour_gap: 8
 
