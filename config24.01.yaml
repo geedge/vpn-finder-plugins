@@ -3,7 +3,7 @@ common:
     time_zone: Asia/Yangon
     recv_time_columnname: recv_time
     time_filter_pattern: (recv_time_columnname> toDateTime('{$start_time}', '{$time_zone}')) AND(recv_time_columnname <= toDateTime('{$end_time}', '{$time_zone}'))
-    save_knowledgebase: True
+    save_knowledgebase: False
     active_scan:  # max calls/s (rough estimate) = max workers * max_call_per_sec
         switch: off
         max_workers: 100
