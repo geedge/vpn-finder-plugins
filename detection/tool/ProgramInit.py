@@ -11,11 +11,7 @@ import os
 def dataFilerClear():
     # Clear detection1 data
     # print(os.path.join(os.getcwd()))
-    Functions.clear('PsiphonServerIP.txt')
     Functions.clear_dir('logs/', git_keep=True)
-    # toolFunction.clear_dir('data/feature', git_keep=True)
-    # toolFunction.clear_dir('data/result', git_keep=True)
-    # toolFunction.clear_dir('data/model/pic')
-
+    Functions.clear_dir('data/', git_keep=True)
 
 dataFilerClear()
