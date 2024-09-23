@@ -3,7 +3,7 @@ common:
     time_zone: Asia/Yangon
     recv_time_columnname: recv_time
     time_filter_pattern: (recv_time_columnname> toDateTime('{$start_time}', '{$time_zone}')) AND(recv_time_columnname <= toDateTime('{$end_time}', '{$time_zone}'))
-    save_knowledgebase: False
+    save_knowledgebase: True
     active_scan:  # max calls/s (rough estimate) = max workers * max_call_per_sec
         switch: off
         max_workers: 100
@@ -67,10 +67,10 @@ ipvanishvpn:
     confidence: confirmed
     domain:
         object_type: domain
-        sql: SELECT DISTINCT dns_qname FROM {$db_name}.{$table_name} WHERE {$time_filter} AND dns_qname LIKE '%.vpn.ipvanish.com'
+        sql: SELECT dns_qname FROM {$db_name}.{$table_name} WHERE {$time_filter} AND dns_qname LIKE '%.vpn.ipvanish.com' group by dns_qname
     ip:
         object_type: ip
-        kb_sql: SELECT distinct domain FROM {$mariadb_dbname}.{$mariadb_domain_tablename} where vpn_service_name = 'ipvanishvpn'
+        kb_sql: SELECT domain FROM {$mariadb_dbname}.{$mariadb_domain_tablename} where vpn_service_name = 'ipvanishvpn' group by domain
 
 
 ivacyvpn:
@@ -80,10 +80,10 @@ ivacyvpn:
     confidence: confirmed
     domain:
         object_type: domain
-        sql: SELECT DISTINCT dns_qname FROM {$db_name}.{$table_name} WHERE {$time_filter} AND ((dns_qname LIKE '%.pointtoserver.com') or (dns_qname LIKE '%.ptoserver.com') or (dns_qname LIKE '%.dns2use.com'))
+        sql: SELECT dns_qname FROM {$db_name}.{$table_name} WHERE {$time_filter} AND ((dns_qname LIKE '%.pointtoserver.com') or (dns_qname LIKE '%.ptoserver.com') or (dns_qname LIKE '%.dns2use.com')) group by dns_qname
     ip:
         object_type: ip
-        kb_sql: SELECT distinct domain FROM {$mariadb_dbname}.{$mariadb_domain_tablename} where vpn_service_name = 'ivacyvpn'
+        kb_sql: SELECT domain FROM {$mariadb_dbname}.{$mariadb_domain_tablename} where vpn_service_name = 'ivacyvpn' group by domain
 
 
 protonvpn:
@@ -103,13 +103,13 @@ cyberghostvpn:
     confidence: confirmed
     domain:
         object_type: domain
-        sql: SELECT DISTINCT dns_qname FROM {$db_name}.{$table_name} WHERE {$time_filter} AND dns_qname LIKE '%.nodes.gen4.ninja'
+        sql: SELECT dns_qname FROM {$db_name}.{$table_name} WHERE {$time_filter} AND dns_qname LIKE '%.nodes.gen4.ninja' group by dns_qname
     ip:
         object_type: ip
-        kb_sql: SELECT distinct domain FROM {$mariadb_dbname}.{$mariadb_domain_tablename} where vpn_service_name = 'cyberghostvpn'
+        kb_sql: SELECT domain FROM {$mariadb_dbname}.{$mariadb_domain_tablename} where vpn_service_name = 'cyberghostvpn' group by domain
         monitor_on: False
         udp_monitor_app_name: Cyberghost-UDP
-        sql: SELECT DISTINCT server_ip FROM {$db_name}.{$table_name} WHERE {$time_filter} and app_transition like '%{$udp_monitor_app_name}%'
+        sql: SELECT server_ip FROM {$db_name}.{$table_name} WHERE {$time_filter} and app_transition like '%{$udp_monitor_app_name}%' group by server_ip
 
 
 windscribevpn:
@@ -119,12 +119,12 @@ windscribevpn:
     confidence: confirmed
     domain:
         object_type: domain
-        sql: SELECT DISTINCT server_fqdn FROM {$db_name}.{$table_name} WHERE {$time_filter} and server_domain in ({$domain_list}) and server_fqdn like '%-%' ORDER BY server_fqdn ASC
+        sql: SELECT  server_fqdn FROM {$db_name}.{$table_name} WHERE {$time_filter} and server_domain in ({$domain_list}) and server_fqdn like '%-%' group by server_fqdn ORDER BY server_fqdn ASC
         domains: whiskergalaxy.com, totallyacdn.com
     ip:
         object_type: ip
-        kb_sql: SELECT distinct domain FROM {$mariadb_dbname}.{$mariadb_domain_tablename} where vpn_service_name = 'windscribevpn'
-        sql: SELECT DISTINCT server_ip FROM {$db_name}.{$table_name} WHERE {$time_filter} and (ssl_cert_subject like '%Windscribe%' or ssl_cert_issuer like '%Windscribe%')
+        kb_sql: SELECT domain FROM {$mariadb_dbname}.{$mariadb_domain_tablename} where vpn_service_name = 'windscribevpn' group by domain
+        sql: SELECT server_ip FROM {$db_name}.{$table_name} WHERE {$time_filter} and (ssl_cert_subject like '%Windscribe%' or ssl_cert_issuer like '%Windscribe%') group by server_ip
 
 turbovpn:
     vpn_service_name: turbovpn
@@ -141,7 +141,7 @@ geckovpn:
     plugin_name: geckovpn
     object_type: ip
     confidence: confirmed
-    sql: SELECT DISTINCT server_ip FROM {$db_name}.{$table_name} WHERE {$time_filter} AND ssl_cert_issuer like '%CN=SUV;O=SUV999%'
+    sql: SELECT server_ip FROM {$db_name}.{$table_name} WHERE {$time_filter} AND ssl_cert_issuer like '%CN=SUV;O=SUV999%' group by server_ip
 
 
 vpnunlimited:
@@ -150,7 +150,7 @@ vpnunlimited:
     plugin_name: vpnunlimited
     object_type: ip
     confidence: confirmed
-    sql: SELECT DISTINCT server_ip FROM {$db_name}.{$table_name} WHERE {$time_filter} AND server_domain in ({$domain_list})
+    sql: SELECT server_ip FROM {$db_name}.{$table_name} WHERE {$time_filter} AND server_domain in ({$domain_list}) group by server_ip
     domains: hurriwhilealivo.club, comcatches.live, cyphyl.com, chinacitybit.click, valarre.com, puppyfood.info, securestartup.business, beansandchips.com, zigzagwand.art, wifimeshnet.cc, atomicspike.art, fastwaterblog.com, aspheric-zombies.club, godzillo.link, cyberroast.shop, seligmania-online.com, easy-2fa.us, ikitoshi.cc, webcitynews.com, prebreeze.club, blackbettyclothing.com, cyberanalytics.link, musicinst.link, adsoasis.xyz, holidayphoto.xyz, graphlist.dev, nohumguitar.com, coffeedaybreak.com, thewalruss.net, learnjapanfilms.cc, ezhyperlix.xyz, statsnet.group, hockeybet.org, fastblazingpix.com, zapp-a-weasel.live, puppyfood.info, fastdecidos.info, cyberroast.shop, picknife.org, nohumguitar.com, thewalruss.net, simplexsolutionsinc.com, prebreeze.club
 
 
