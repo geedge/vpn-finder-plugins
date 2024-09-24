@@ -18,7 +18,7 @@ monitor:
 
 
 clickhouse:
-    host: 10.160.12.21
+    host: 10.160.12.147
     port: 9001
     username: default
     password: galaxy2019
@@ -27,7 +27,7 @@ clickhouse:
     security_table_name: security_event
 
 mariadb:
-    host: 10.160.12.3
+    host: 10.160.12.201
     port: 3306
     user: root
     pswd: galaxy2019
@@ -36,7 +36,7 @@ mariadb:
     domain_table_name: cn_vpn_learning_domain
 
 knowledgebase:
-    host: 10.160.12.3:8090
+    host: 10.160.12.204:8090
     kb_username:
     api_pin:
     api_path: /v1/knowledgeBase/items/batch
