@@ -96,7 +96,7 @@ class IvacyvpnServerip(VpnDetector):
 
         if query_result:
             for row in query_result:
-                self.server_name_list.append(row[0].strip('$'))
+                self.server_name_list.append(row[0])
 
         # add dc-xxx.pointtoserver.com to self.server_name_list
         self.server_name_list.extend([f"dc-{str(index)}.pointtoserver.com" for index in range(1000)])

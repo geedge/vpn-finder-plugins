@@ -1,0 +1,4 @@
+type,source_id,source_name,ip_addr_format,ip1,ip2,domain,method,confidence,tags,description,first_seen_time,last_seen_time
+IP,fd3a275b-49e0-462e-8630-c0f4698da9a8,hotspotvpn,Single,104.232.37.80,104.232.37.80,,passive_ml,confirmed,hotspotvpn,,,
+IP,fd3a275b-49e0-462e-8630-c0f4698da9a8,hotspotvpn,Single,185.12.44.218,185.12.44.218,,passive_ml,confirmed,hotspotvpn,,,
+IP,fd3a275b-49e0-462e-8630-c0f4698da9a8,hotspotvpn,Single,104.232.37.180,104.232.37.180,,passive_ml,confirmed,hotspotvpn,,,

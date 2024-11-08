@@ -38,8 +38,8 @@ mariadb:
 
 knowledgebase:
     host: 192.168.44.54:8090
-    kb_username:
-    api_pin:
+    kb_username: learning_engine
+    api_pin: 111111
     api_path: /v1/tag/items/batch
     api_token: a2857bc21b01421b85953fc2c65b4d4c
     api_retry_times: 3

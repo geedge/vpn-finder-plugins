@@ -97,7 +97,7 @@ class VpnDetector:
             result_df['ip_addr_format'] = 'Single'
 
         if object_type == 'domain':
-            result_df['domain'] = ['$'+i for i in object_list]
+            result_df['domain'] = [i for i in object_list]
             result_df['type'] = 'Domain'
 
         result_df['source_id'] = plugin_id

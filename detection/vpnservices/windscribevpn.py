@@ -130,7 +130,7 @@ class WindscribevpnActiveServerip(VpnDetector):
             self.mariadb.close()
 
         if query_result:
-            servername_list = [i[0].strip('$') for i in query_result]
+            servername_list = [i[0] for i in query_result]
 
         self.server_name_list.extend(servername_list)
 

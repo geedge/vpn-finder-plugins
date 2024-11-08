@@ -17,6 +17,8 @@ class KnowledgeBaseMonitor:
     def __init__(self):
         self.monitor_config = Config().config['monitor']
         self.knowledgebase_config = Config().config['knowledgebase']
+        # 打印self.knowledgebase_config
+        logger.info(self.knowledgebase_config)
         self.knowledgebase_tool = KnowledgeApi(self.knowledgebase_config)
 
     def get_vpn_count(self, plugin_name=None, start_t=None, end_t=None, node_type='ip', mode='active', timezone_gap_hour=0):
