@@ -79,14 +79,12 @@ class WindscribevpnActiveServerip(VpnDetector):
         self.kb_sql = self.plugin_config['ip']['kb_sql']
         self.sql = self.plugin_config['ip']['sql']
         self.kb_dbname = self.config['knowledgebase']['db_name']
-        self.kb_table_name = self.config['knowledgebase']['domain_library_name']
 
         self.mariadb = MariadbUtil(self.config['mariadb']['host'], self.config['mariadb']['port'],
                                    self.config['mariadb']['user'], str(self.config['mariadb']['pswd']),
                                    self.config['mariadb']['db_name'])
         self.mariadb_dbname = self.config['mariadb']['db_name']
-        self.mariadb_ip_tb_name = self.config['mariadb']['ip_table_name']
-        self.mariadb_domain_tb_name = self.config['mariadb']['domain_table_name']
+        self.mariadb_tb_name = self.config['mariadb']['table_name']
 
         self.server_name_list = []
 
@@ -122,7 +120,7 @@ class WindscribevpnActiveServerip(VpnDetector):
         :return: windscribevpn server ip list
         """
         self.kb_sql = self.kb_sql.replace("{$mariadb_dbname}", self.mariadb_dbname).replace(
-            "{$mariadb_domain_tablename}", self.mariadb_domain_tb_name)
+            "{$mariadb_tablename}", self.mariadb_tb_name)
 
         servername_list = []
         resolved_ip_list = []
@@ -132,7 +130,7 @@ class WindscribevpnActiveServerip(VpnDetector):
             self.mariadb.close()
 
         if query_result:
-            servername_list = [i[0] for i in query_result]
+            servername_list = [i[0].strip('$') for i in query_result]
 
         self.server_name_list.extend(servername_list)
 

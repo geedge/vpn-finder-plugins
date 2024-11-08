@@ -74,7 +74,7 @@ class VpnDetector:
         config = Config().config
         return config
 
-    def save_to_knowledgebase(self, object_list, object_type, vpn_service_name, plugin_id, plugin_name, output_filename, confidence='suspected'):
+    def save_results(self, object_list, object_type, vpn_service_name, plugin_id, plugin_name, output_filename, confidence='suspected'):
         """
         Write data to local file and knowledge base
         :param object_type:  ip or domain
@@ -86,27 +86,25 @@ class VpnDetector:
         :param confidence: 3 kinds of confidence level, confirmed, suspect, tentative
         :return:
         """
-        if object_type == 'ip':
-            library_name = self.config['knowledgebase']['ip_library_name']
-        else:
-            library_name = self.config['knowledgebase']['domain_library_name']
-        knowledge_id = self.kb.get_library_id(library_name)
 
         # convert result data into required format https://docs.geedge.net/pages/viewpage.action?pageId=104760257
-        result_df = pd.DataFrame()
+        result_df = pd.DataFrame(columns=['type', 'source_id', 'source_name', 'ip_addr_format', 'ip1', 'ip2', 'domain', 'method', 'confidence', 'tags', 'description', 'first_seen_time', 'last_seen_time'])
+
         if object_type == 'ip':
             result_df['ip1'] = object_list
             result_df['ip2'] = object_list
-            result_df.insert(0, 'addr_format', 'Single')
-        if object_type == 'domain':
-            result_df['domain'] = object_list
+            result_df['type'] = 'IP'
+            result_df['ip_addr_format'] = 'Single'
 
-        result_df['plugin_id'] = plugin_id
-        result_df['plugin_name'] = plugin_name
-        result_df['vpn_service_name'] = vpn_service_name
+        if object_type == 'domain':
+            result_df['domain'] = ['$'+i for i in object_list]
+            result_df['type'] = 'Domain'
+
+        result_df['source_id'] = plugin_id
+        result_df['source_name'] = plugin_name
+        result_df['tags'] = vpn_service_name
         result_df['method'] = 'passive_ml'
         result_df['confidence'] = confidence
-        result_df['is_valid'] = 1
 
         # result save
         if len(result_df) > 0:
@@ -124,7 +122,9 @@ class VpnDetector:
                 knowledge_api = KnowledgeApi(self.config['knowledgebase'])
                 self.logger.info('[{}] - [Updating knowledgebase]- {} num:{}'.format(plugin_name, object_type, len(object_list)))
                 description_str = "Update {} record(s).".format(len(object_list))
-                knowledge_api.file_import(result_file, knowledge_id, 'update', description_str)
+                knowledge_api.file_import(result_file, 'update', description_str)
+                self.logger.info(
+                    '[{}] - Write to knowledgebase successfully.'.format(plugin_name))
 
 
 
@@ -201,9 +201,7 @@ class VpnDetector:
         return [i for i in original_ip_list if ':' not in i]
 
 
-# 入口函数定义
-if __name__ == '__main__':
-
+def main():
     parser = argparse.ArgumentParser(description='VPN detection')
     parser.add_argument('-p', '--plugin', type=str, help='plugin name')
     parser.add_argument('-m', '--mode', type=str, default='recent', help='recent or fixed')
@@ -232,7 +230,8 @@ if __name__ == '__main__':
             exit()
         # 根据当前时间向前取整小时
         end_time = datetime.datetime.now().strftime("%Y-%m-%d %H:00:00")
-        start_time = (datetime.datetime.now() - datetime.timedelta(hours=recent_interval)).strftime("%Y-%m-%d %H:00:00")
+        start_time = (datetime.datetime.now() - datetime.timedelta(hours=recent_interval)).strftime(
+            "%Y-%m-%d %H:00:00")
     elif mode == 'fixed':
         if start_time == '' or end_time == '':
             print('Please input correct time format')
@@ -241,7 +240,6 @@ if __name__ == '__main__':
     else:
         print('Please input correct time mode')
         exit()
-
 
     detector = None
     if plugin_name == 'hotspotvpn':
@@ -275,31 +273,31 @@ if __name__ == '__main__':
         print('Please input correct plugin name')
         exit()
 
-
     result_group = detector.find_server()
     for server_group in result_group:
         result_list = server_group.server_list
         detector.logger.debug('[{}] - result list before filter: {}.'.format(detector.plugin_name, result_list))
         if server_group.object_type == 'ip':
             # 日志记录IP数量
-            detector.logger.info('[{}] - {} {} found.'.format(detector.plugin_name, len(result_list), server_group.object_type))
+            detector.logger.info(
+                '[{}] - {} {} found.'.format(detector.plugin_name, len(result_list), server_group.object_type))
             result_list = detector.filtered_by_isp(result_list, detector.config['common']['protected_isp_list'])
             result_list = detector.filtered_by_ip(result_list, detector.config['common']['protected_ip_list'])
             result_list = detector.filter_ipv6(result_list)
             detector.logger.debug(
-                '[{}] - filtered list {}.'.format(detector.plugin_name, [i for i in server_group.server_list if i not in result_list]))
-            detector.logger.info('[{}] - Filtered by ISP and IP, {} {} left.'.format(detector.plugin_name, len(result_list), server_group.object_type))
-        if len(result_list) > 0:
-            detector.save_to_knowledgebase(result_list, server_group.object_type,
-                                           detector.vpn_service_name, detector.plugin_id,
-                                           detector.plugin_name,
-                                           server_group.output_file_name,
-                                           detector.confidence)
-
-            # Output logs to record the amount of data written, plugin id, plugin name and other information
+                '[{}] - filtered list {}.'.format(detector.plugin_name,
+                                                  [i for i in server_group.server_list if i not in result_list]))
             detector.logger.info(
-                '[{}] - Write {} {} to knowledgebase successfully.'.format(detector.plugin_name,
-                                                                                          len(result_list),
-                                                                                          server_group.object_type))
+                '[{}] - Filtered by ISP and IP, {} {} left.'.format(detector.plugin_name, len(result_list),
+                                                                    server_group.object_type))
+        if len(result_list) > 0:
+            detector.save_results(result_list, server_group.object_type,
+                                  detector.vpn_service_name, detector.plugin_id,
+                                  detector.plugin_name,
+                                  server_group.output_file_name,
+                                  detector.confidence)
 
 
+# 入口函数定义
+if __name__ == '__main__':
+    main()

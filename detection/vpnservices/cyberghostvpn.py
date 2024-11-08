@@ -71,14 +71,12 @@ class CyberghostvpnServerip(VpnDetector):
 
         self.kb_sql = self.plugin_config['ip']['kb_sql']
         self.kb_dbname = self.config['knowledgebase']['db_name']
-        self.kb_table_name = self.config['knowledgebase']['domain_library_name']
 
         self.mariadb = MariadbUtil(self.config['mariadb']['host'], self.config['mariadb']['port'],
                                    self.config['mariadb']['user'], str(self.config['mariadb']['pswd']),
                                    self.config['mariadb']['db_name'])
         self.mariadb_dbname = self.config['mariadb']['db_name']
-        self.mariadb_ip_tb_name = self.config['mariadb']['ip_table_name']
-        self.mariadb_domain_tb_name = self.config['mariadb']['domain_table_name']
+        self.mariadb_tb_name = self.config['mariadb']['table_name']
 
         self.sql = self.plugin_config['ip']['sql']
 
@@ -130,7 +128,7 @@ class CyberghostvpnServerip(VpnDetector):
         :return: cyberghostvpn server ip list
         """
         self.kb_sql = self.kb_sql.replace("{$mariadb_dbname}", self.mariadb_dbname).replace(
-            "{$mariadb_domain_tablename}", self.mariadb_domain_tb_name)
+            "{$mariadb_tablename}", self.mariadb_tb_name)
 
         # 根据server name获取ip
         self.logger.info('[{}] - Get servername from knowledge base.'.format(self.plugin_name))
@@ -142,7 +140,7 @@ class CyberghostvpnServerip(VpnDetector):
             self.mariadb.close()
 
         if query_result:
-            servername_list = [i[0] for i in query_result]
+            servername_list = [i[0].strip('$') for i in query_result]
         self.server_name_list.extend(servername_list)
 
         # 判断是否能够访问外网，如果能够访问外网，则从外网获取cyberghost_servername_list的域名解析地址
